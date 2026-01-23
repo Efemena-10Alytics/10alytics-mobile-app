@@ -1,7 +1,7 @@
-import { View } from "react-native";
-import { AppText } from "@/src/components/app-text";
+import { AppText } from "@/components/app-text";
+import { Button } from "@/components/button";
 import { Link } from "expo-router";
-import { Button } from "@/src/components/button";
+import { View } from "react-native";
 
 export default function OnboardingFirstScreen() {
   return (

@@ -1,13 +1,14 @@
+import { useColorScheme } from '@/hooks/use-color-scheme';
+import { useAuthStore } from "@/utils/auth-store";
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import { SplashScreen, Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import React, { useEffect } from "react";
-import { useAuthStore } from "@/utils/auth-store";
 import { Platform } from "react-native";
-import { useColorScheme } from '@/hooks/use-color-scheme';
-import '@/global.css';
+import '../../global.css';
 
 const isWeb = Platform.OS === "web";
+
 if (!isWeb) {
   SplashScreen.preventAutoHideAsync();
 }
@@ -23,13 +24,16 @@ export default function RootLayout() {
     shouldCreateAccount,
     hasCompletedOnboarding,
     _hasHydrated,
+    checkAuth,
   } = useAuthStore();
 
   useEffect(() => {
     if (_hasHydrated) {
+      // Check authentication status when app loads
+      checkAuth();
       SplashScreen.hideAsync();
     }
-  }, [_hasHydrated]);
+  }, [_hasHydrated, checkAuth]);
 
   if (!_hasHydrated && !isWeb) {
     return null;

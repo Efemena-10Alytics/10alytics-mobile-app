@@ -1,5 +1,5 @@
-import { AppText } from "@/src/components/app-text";
-import { Button } from "@/src/components/button";
+import { AppText } from "@/components/app-text";
+import { Button } from "@/components/button";
 import { View } from "react-native";
 
 export default function Index() {

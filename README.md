@@ -1,50 +1,143 @@
-# Welcome to your Expo app 👋
+# 10alytics Learning Management Mobile App
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+A modern, gamified learning management mobile app built with Expo, React Native, and Better Auth.
 
-## Get started
+## Features
 
-1. Install dependencies
+✨ **Authentication**
+- Email and password sign-in/sign-up
+- Google OAuth integration
+- Secure session management
 
-   ```bash
-   npm install
-   ```
+📚 **Course Management**
+- Course progress tracking with visual indicators
+- Achievement badges and gamification
+- Learning streaks
+- Course completion percentages
 
-2. Start the app
+🎥 **Video Library**
+- Categorized video content
+- Progress tracking per video
+- Watch status indicators
+- Duration and view statistics
 
-   ```bash
-   npx expo start
-   ```
+📅 **Event Calendar**
+- Today's events display
+- Upcoming events
+- Event details (time, location, attendees)
+- Interactive calendar navigation
 
-In the output, you'll find options to open the app in a
+💬 **Group Chat**
+- Study group management
+- Real-time messaging interface
+- Unread message indicators
+- Group member counts
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+👤 **Profile**
+- User statistics dashboard
+- Achievement showcase
+- Settings access
+- Account management
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+## Tech Stack
 
-## Get a fresh project
+- **Framework**: Expo (React Native)
+- **Navigation**: Expo Router
+- **Authentication**: Laravel API (JWT/Sanctum)
+- **Styling**: NativeWind (Tailwind CSS)
+- **Animations**: React Native Reanimated
+- **State Management**: Zustand
+- **Icons**: Expo Vector Icons
 
-When you're ready, run:
+## Getting Started
 
+### Prerequisites
+
+- Node.js 18+ or Bun
+- Expo CLI
+- A Laravel API backend server
+
+### Installation
+
+1. Install dependencies:
 ```bash
-npm run reset-project
+bun install
+# or
+npm install
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+2. Set up environment variables:
+```bash
+cp .env.example .env
+```
 
-## Learn more
+Edit `.env` and add your Laravel API URL:
+```env
+EXPO_PUBLIC_API_URL=http://localhost:8000/api
+```
 
-To learn more about developing your project with Expo, look at the following resources:
+3. Start the development server:
+```bash
+bun start
+# or
+npm start
+```
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+### Backend Setup
 
-## Join the community
+This app requires a Laravel API backend. See [LARAVEL_API_SETUP.md](./LARAVEL_API_SETUP.md) for detailed backend setup instructions.
 
-Join our community of developers creating universal apps.
+## Project Structure
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+```
+src/
+├── app/
+│   ├── (tabs)/              # Main app screens
+│   │   ├── index.tsx        # Courses/Home
+│   │   ├── videos.tsx       # Video library
+│   │   ├── calendar.tsx     # Event calendar
+│   │   ├── chat.tsx         # Group chat
+│   │   └── profile.tsx      # User profile
+│   ├── sign-in.tsx          # Sign in screen
+│   ├── create-account.tsx   # Sign up screen
+│   └── onboarding/          # Onboarding flow
+├── components/
+│   └── gamification/        # Gamification components
+├── lib/
+│   └── auth-client.ts       # Better Auth client
+└── utils/
+    └── auth-store.tsx       # Auth state management
+```
+
+## Design
+
+- **Primary Color**: #DA6728 (Orange)
+- **Animations**: Smooth fade-in and spring animations throughout
+- **Gamification**: Progress rings, achievement badges, streak counters
+- **UI/UX**: Modern, clean interface with gradient headers
+
+## Development
+
+### Running on Different Platforms
+
+- **iOS Simulator**: Press `i` in the Expo CLI
+- **Android Emulator**: Press `a` in the Expo CLI
+- **Physical Device**: Scan QR code with Expo Go app
+
+### Building for Production
+
+```bash
+# iOS
+eas build --platform ios
+
+# Android
+eas build --platform android
+```
+
+## Documentation
+
+For detailed setup instructions, including backend configuration, see [SETUP.md](./SETUP.md).
+
+## License
+
+Private project

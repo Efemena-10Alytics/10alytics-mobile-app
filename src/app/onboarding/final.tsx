@@ -1,7 +1,7 @@
+import { AppText } from "@/components/app-text";
+import { Button } from "@/components/button";
+import { useAuthStore } from "@/utils/auth-store";
 import { View } from "react-native";
-import { AppText } from "@/src/components/app-text";
-import { Button } from "@/src/components/button";
-import { useAuthStore } from "@/src/utils/auth-store";
 
 export default function OnboardingFinalScreen() {
   const { completeOnboarding } = useAuthStore();
