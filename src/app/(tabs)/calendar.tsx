@@ -1,25 +1,19 @@
+import { Colors } from "@/constants/theme";
+import { useColorScheme } from "@/hooks/use-color-scheme";
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
+import { LinearGradient } from "expo-linear-gradient";
 import React, { useState } from "react";
 import {
-  View,
   ScrollView,
   Text,
   TouchableOpacity,
-  Dimensions,
+  View
 } from "react-native";
-import { LinearGradient } from "expo-linear-gradient";
 import Animated, {
   FadeInDown,
   FadeInRight,
 } from "react-native-reanimated";
-import { Colors } from "@/constants/theme";
-import { useColorScheme } from "@/hooks/use-color-scheme";
-import {
-  Clock,
-  MapPin,
-  Users,
-  ChevronLeft,
-  ChevronRight,
-} from "@expo/vector-icons";
+
 
 // const { width } = Dimensions.get("window");
 
@@ -115,7 +109,7 @@ export default function CalendarScreen() {
                   )
                 }
               >
-                <ChevronLeft size={24} color="#FFFFFF" />
+                <MaterialCommunityIcons name="chevron-left" size={24} color="#FFFFFF" />
               </TouchableOpacity>
               <View className="items-center">
                 <Text
@@ -144,7 +138,7 @@ export default function CalendarScreen() {
                   )
                 }
               >
-                <ChevronRight size={24} color="#FFFFFF" />
+                <MaterialCommunityIcons name="chevron-right" size={24} color="#FFFFFF" />
               </TouchableOpacity>
             </View>
           </Animated.View>
@@ -154,12 +148,12 @@ export default function CalendarScreen() {
         {todayEvents.length > 0 && (
           <View className="px-6 mt-6">
             <Animated.View entering={FadeInRight.delay(200)}>
-            <Text
-              className="text-xl font-bold mb-4"
-              style={{ color: colors.text }}
-            >
-              Today&apos;s Events
-            </Text>
+              <Text
+                className="text-xl font-bold mb-4"
+                style={{ color: colors.text }}
+              >
+                Today&apos;s Events
+              </Text>
               {todayEvents.map((event, index) => (
                 <Animated.View
                   key={event.id}
@@ -193,7 +187,7 @@ export default function CalendarScreen() {
                           {event.title}
                         </Text>
                         <View className="flex-row items-center mb-2">
-                          <Clock size={14} color={colors.icon} />
+                          <MaterialCommunityIcons name="clock" size={14} color={colors.icon} />
                           <Text
                             className="text-sm ml-1"
                             style={{ color: colors.icon }}
@@ -202,7 +196,7 @@ export default function CalendarScreen() {
                           </Text>
                         </View>
                         <View className="flex-row items-center mb-2">
-                          <MapPin size={14} color={colors.icon} />
+                          <MaterialCommunityIcons name="map-marker" size={14} color={colors.icon} />
                           <Text
                             className="text-sm ml-1"
                             style={{ color: colors.icon }}
@@ -211,7 +205,7 @@ export default function CalendarScreen() {
                           </Text>
                         </View>
                         <View className="flex-row items-center">
-                          <Users size={14} color={colors.icon} />
+                          <MaterialCommunityIcons name="account-group" size={14} color={colors.icon} />
                           <Text
                             className="text-sm ml-1"
                             style={{ color: colors.icon }}
@@ -280,7 +274,7 @@ export default function CalendarScreen() {
                         })}
                       </Text>
                       <View className="flex-row items-center mb-2">
-                        <Clock size={14} color={colors.icon} />
+                        <MaterialCommunityIcons name="clock" size={14} color={colors.icon} />
                         <Text
                           className="text-sm ml-1"
                           style={{ color: colors.icon }}
@@ -289,9 +283,10 @@ export default function CalendarScreen() {
                         </Text>
                       </View>
                       <View className="flex-row items-center">
-                        <MapPin size={14} color={colors.icon} />
+                        <MaterialCommunityIcons name="map-marker" size={14} color={colors.icon} />
                         <Text
                           className="text-sm ml-1"
+                          color={colors.icon}
                           style={{ color: colors.icon }}
                         >
                           {event.location}
