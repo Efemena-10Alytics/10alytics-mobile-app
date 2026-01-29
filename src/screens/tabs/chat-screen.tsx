@@ -8,7 +8,7 @@ import {
   FadeInRight,
 } from "react-native-reanimated";
 
-export default function ChatScreen() {
+export function ChatScreen() {
   const [message, setMessage] = useState("");
   const scrollViewRef = useRef<ScrollView>(null);
 

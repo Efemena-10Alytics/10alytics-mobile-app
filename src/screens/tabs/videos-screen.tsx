@@ -10,7 +10,7 @@ import {
 
 // const { width } = Dimensions.get("window");
 
-export default function VideosScreen() {
+export function VideosScreen() {
   const [selectedCategory, setSelectedCategory] = useState("All");
 
   const categories = ["All", "React", "TypeScript", "Design", "Mobile"];

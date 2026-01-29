@@ -100,7 +100,7 @@ export const AnimatedScrollView = (
     ? Object.assign({}, props, { contentInsetAdjustmentBehavior: "automatic" as const })
     : props;
 
-  return useCssElement(Animated.ScrollView, propsWithDefaults as any, {
+  return useCssElement(Animated.ScrollView as any, propsWithDefaults, {
     className: "style",
     contentClassName: "contentContainerStyle",
     contentContainerClassName: "contentContainerStyle",
@@ -152,7 +152,7 @@ export const PressableScale = ({
   };
 
   return useCssElement(
-    PresstoPressableScale,
+    PresstoPressableScale as any,
     { ...props, onPress: handlePress },
     { className: "style" }
   );

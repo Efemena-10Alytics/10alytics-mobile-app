@@ -5,6 +5,7 @@ import { SplashScreen, Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import React, { useEffect } from "react";
 import { Platform } from "react-native";
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import '../../global.css';
 
 const isWeb = Platform.OS === "web";
@@ -40,25 +41,27 @@ export default function RootLayout() {
   }
 
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <React.Fragment>
-        <StatusBar style="auto" />
-        <Stack>
-          <Stack.Protected guard={isLoggedIn}>
-            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-            <Stack.Screen name="modal" options={{ presentation: "modal" }} />
-          </Stack.Protected>
-          <Stack.Protected guard={!isLoggedIn && hasCompletedOnboarding}>
-            <Stack.Screen name="sign-in" />
-            <Stack.Protected guard={shouldCreateAccount}>
-              <Stack.Screen name="create-account" />
+    <GestureHandlerRootView style={isWeb ? undefined : { flex: 1 }}>
+      <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+        <React.Fragment>
+          <StatusBar style="auto" />
+          <Stack>
+            <Stack.Protected guard={isLoggedIn}>
+              <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+              <Stack.Screen name="modal" options={{ presentation: "modal" }} />
             </Stack.Protected>
-          </Stack.Protected>
-          <Stack.Protected guard={!hasCompletedOnboarding}>
-            <Stack.Screen name="onboarding" options={{ headerShown: false }} />
-          </Stack.Protected>
-        </Stack>
-      </React.Fragment>
-    </ThemeProvider>
+            <Stack.Protected guard={!isLoggedIn && hasCompletedOnboarding}>
+              <Stack.Screen name="sign-in" />
+              <Stack.Protected guard={shouldCreateAccount}>
+                <Stack.Screen name="create-account" />
+              </Stack.Protected>
+            </Stack.Protected>
+            <Stack.Protected guard={!hasCompletedOnboarding}>
+              <Stack.Screen name="onboarding" options={{ headerShown: false }} />
+            </Stack.Protected>
+          </Stack>
+        </React.Fragment>
+      </ThemeProvider>
+    </GestureHandlerRootView>
   );
 }
