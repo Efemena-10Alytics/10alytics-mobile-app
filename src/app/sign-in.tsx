@@ -1,6 +1,8 @@
 import { Colors } from "@/constants/theme";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { apiClient } from "@/lib/api-client";
+import { KeyboardAvoidingView, ScrollView, Text, TextInput, PressableScale, View } from "@/tw";
+import { Animated } from "@/tw/animated";
 import { useAuthStore } from "@/utils/auth-store";
 import AntDesign from '@expo/vector-icons/AntDesign';
 import { LinearGradient } from "expo-linear-gradient";
@@ -8,15 +10,9 @@ import { router } from "expo-router";
 import React, { useState } from "react";
 import {
   Alert,
-  KeyboardAvoidingView,
   Platform,
-  ScrollView,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
 } from "react-native";
-import Animated, {
+import {
   FadeInDown,
   FadeInRight,
 } from "react-native-reanimated";
@@ -92,7 +88,7 @@ export default function SignInScreen() {
     >
       <ScrollView
         className="flex-1"
-        contentContainerStyle={{ flexGrow: 1 }}
+        contentContainerClassName="flex-grow"
         showsVerticalScrollIndicator={false}
       >
         {/* Header */}
@@ -179,7 +175,7 @@ export default function SignInScreen() {
                   autoCapitalize="none"
                   autoComplete="password"
                 />
-                <TouchableOpacity
+                <PressableScale
                   onPress={() => setShowPassword(!showPassword)}
                   className="p-2"
                 >
@@ -188,14 +184,14 @@ export default function SignInScreen() {
                   ) : (
                     <AntDesign name="eye" size={20} color={colors.icon} />
                   )}
-                </TouchableOpacity>
+                </PressableScale>
               </View>
             </View>
           </Animated.View>
 
           {/* Sign In Button */}
           <Animated.View entering={FadeInDown.delay(400)}>
-            <TouchableOpacity
+            <PressableScale
               onPress={handleEmailSignIn}
               disabled={loading}
               className="py-4 rounded-2xl items-center mb-4"
@@ -207,7 +203,7 @@ export default function SignInScreen() {
               <Text className="text-base font-bold text-white">
                 {loading ? "Signing in..." : "Sign In"}
               </Text>
-            </TouchableOpacity>
+            </PressableScale>
           </Animated.View>
 
           {/* Divider */}
@@ -233,7 +229,7 @@ export default function SignInScreen() {
 
           {/* Google Sign In Button */}
           <Animated.View entering={FadeInDown.delay(600)}>
-            <TouchableOpacity
+            <PressableScale
               onPress={handleGoogleSignIn}
               disabled={loading}
               className="flex-row items-center justify-center py-4 rounded-2xl border-2"
@@ -249,7 +245,7 @@ export default function SignInScreen() {
               >
                 Continue with Google
               </Text>
-            </TouchableOpacity>
+            </PressableScale>
           </Animated.View>
 
           {/* Sign Up Link */}
@@ -263,14 +259,14 @@ export default function SignInScreen() {
             >
               Don&apos;t have an account?{" "}
             </Text>
-            <TouchableOpacity onPress={() => router.push("/create-account")}>
+            <PressableScale onPress={() => router.push("/create-account")}>
               <Text
                 className="text-sm font-semibold"
                 style={{ color: colors.primary }}
               >
                 Sign Up
               </Text>
-            </TouchableOpacity>
+            </PressableScale>
           </Animated.View>
         </View>
       </ScrollView>

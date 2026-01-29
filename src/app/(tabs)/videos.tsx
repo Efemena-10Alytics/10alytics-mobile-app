@@ -1,23 +1,16 @@
+import { Colors } from "@/constants/theme";
+import { useColorScheme } from "@/hooks/use-color-scheme";
+import { ScrollView, Text, PressableScale, View } from "@/tw";
+import { Animated } from "@/tw/animated";
+import { BookOpen, Clock, PlayCircle } from "@expo/vector-icons";
+import { LinearGradient } from "expo-linear-gradient";
 import React, { useState } from "react";
 import {
-  View,
-  ScrollView,
-  Text,
-  TouchableOpacity,
-  Dimensions,
-} from "react-native";
-import { LinearGradient } from "expo-linear-gradient";
-import Animated, {
   FadeInDown,
   FadeInRight,
 } from "react-native-reanimated";
-import { Colors } from "@/constants/theme";
-import { useColorScheme } from "@/hooks/use-color-scheme";
-import { PlayCircle, Clock, BookOpen } from "@expo/vector-icons";
 
 // const { width } = Dimensions.get("window");
-
-const AnimatedTouchable = Animated.createAnimatedComponent(TouchableOpacity);
 
 export default function VideosScreen() {
   const colorScheme = useColorScheme();
@@ -78,7 +71,7 @@ export default function VideosScreen() {
       <ScrollView
         className="flex-1"
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: 100 }}
+        contentContainerClassName="pb-[100px]"
       >
         {/* Header */}
         <LinearGradient
@@ -111,7 +104,7 @@ export default function VideosScreen() {
                   key={category}
                   entering={FadeInRight.delay(300 + index * 50)}
                 >
-                  <TouchableOpacity
+                  <PressableScale
                     onPress={() => setSelectedCategory(category)}
                     className="px-4 py-2 rounded-full mr-2"
                     style={{
@@ -132,7 +125,7 @@ export default function VideosScreen() {
                     >
                       {category}
                     </Text>
-                  </TouchableOpacity>
+                  </PressableScale>
                 </Animated.View>
               ))}
             </ScrollView>
@@ -151,7 +144,7 @@ export default function VideosScreen() {
                 key={video.id}
                 entering={FadeInDown.delay(400 + index * 100)}
               >
-                <AnimatedTouchable
+                <Animated.PressableScale
                   className="mb-4 rounded-2xl overflow-hidden"
                   style={{
                     backgroundColor: colors.background,
@@ -246,7 +239,7 @@ export default function VideosScreen() {
                       )}
                     </View>
                   </View>
-                </AnimatedTouchable>
+                </Animated.PressableScale>
               </Animated.View>
             ))}
         </View>

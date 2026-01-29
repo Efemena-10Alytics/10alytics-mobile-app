@@ -1,16 +1,12 @@
 import { Colors } from "@/constants/theme";
 import { useColorScheme } from "@/hooks/use-color-scheme";
+import { ScrollView, Text, PressableScale, View } from "@/tw";
+import { Animated } from "@/tw/animated";
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { LinearGradient } from "expo-linear-gradient";
 import { router } from "expo-router";
 import React from "react";
 import {
-  ScrollView,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
-import Animated, {
   FadeInDown,
   FadeInRight,
   FadeInUp,
@@ -51,7 +47,7 @@ export default function Index() {
     <View className="flex-1" style={{ backgroundColor: colors.background }}>
       <ScrollView
         className="flex-1"
-        contentContainerStyle={{ flexGrow: 1 }}
+        contentContainerClassName="flex-grow"
         showsVerticalScrollIndicator={false}
       >
         {/* Header with Gradient */}
@@ -139,7 +135,7 @@ export default function Index() {
         {/* CTA Buttons */}
         <View className="px-6 mt-8 mb-8">
           <Animated.View entering={FadeInUp.delay(700)}>
-            <TouchableOpacity
+            <PressableScale
               onPress={() => router.push("/sign-in")}
               className="py-4 rounded-2xl items-center mb-4"
               style={{
@@ -154,11 +150,11 @@ export default function Index() {
               <Text className="text-lg font-bold text-white">
                 Get Started
               </Text>
-            </TouchableOpacity>
+            </PressableScale>
           </Animated.View>
 
           <Animated.View entering={FadeInUp.delay(800)}>
-            <TouchableOpacity
+            <PressableScale
               onPress={() => router.push("/create-account")}
               className="py-4 rounded-2xl items-center border-2"
               style={{
@@ -171,7 +167,7 @@ export default function Index() {
               >
                 Create Account
               </Text>
-            </TouchableOpacity>
+            </PressableScale>
           </Animated.View>
 
           <Animated.View
@@ -184,14 +180,14 @@ export default function Index() {
             >
               Already have an account?&nbsp;
             </Text>
-            <TouchableOpacity onPress={() => router.push("/sign-in")}>
+            <PressableScale onPress={() => router.push("/sign-in")}>
               <Text
                 className="text-sm font-semibold"
                 style={{ color: colors.primary }}
               >
                 Sign In
               </Text>
-            </TouchableOpacity>
+            </PressableScale>
           </Animated.View>
         </View>
       </ScrollView>

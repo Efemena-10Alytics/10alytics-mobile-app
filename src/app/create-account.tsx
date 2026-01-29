@@ -1,6 +1,8 @@
 import { Colors } from "@/constants/theme";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { apiClient } from "@/lib/api-client";
+import { KeyboardAvoidingView, ScrollView, Text, TextInput, PressableScale, View } from "@/tw";
+import { Animated } from "@/tw/animated";
 import { useAuthStore } from "@/utils/auth-store";
 import AntDesign from '@expo/vector-icons/AntDesign';
 import { LinearGradient } from "expo-linear-gradient";
@@ -8,15 +10,9 @@ import { router } from "expo-router";
 import React, { useState } from "react";
 import {
   Alert,
-  KeyboardAvoidingView,
   Platform,
-  ScrollView,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
 } from "react-native";
-import Animated, {
+import {
   FadeInDown,
   FadeInRight,
 } from "react-native-reanimated";
@@ -97,7 +93,7 @@ export default function CreateAccountScreen() {
     >
       <ScrollView
         className="flex-1"
-        contentContainerStyle={{ flexGrow: 1 }}
+        contentContainerClassName="flex-grow"
         showsVerticalScrollIndicator={false}
       >
         {/* Header */}
@@ -215,7 +211,7 @@ export default function CreateAccountScreen() {
                   autoCapitalize="none"
                   autoComplete="password-new"
                 />
-                <TouchableOpacity
+                <PressableScale
                   onPress={() => setShowPassword(!showPassword)}
                   className="p-2"
                 >
@@ -224,7 +220,7 @@ export default function CreateAccountScreen() {
                   ) : (
                     <AntDesign name="eye" size={20} color={colors.icon} />
                   )}
-                </TouchableOpacity>
+                </PressableScale>
               </View>
               <Text
                 className="text-xs mt-2"
@@ -237,7 +233,7 @@ export default function CreateAccountScreen() {
 
           {/* Sign Up Button */}
           <Animated.View entering={FadeInDown.delay(500)}>
-            <TouchableOpacity
+            <PressableScale
               onPress={handleSignUp}
               disabled={loading}
               className="py-4 rounded-2xl items-center mb-4"
@@ -249,7 +245,7 @@ export default function CreateAccountScreen() {
               <Text className="text-base font-bold text-white">
                 {loading ? "Creating account..." : "Create Account"}
               </Text>
-            </TouchableOpacity>
+            </PressableScale>
           </Animated.View>
 
           {/* Divider */}
@@ -275,7 +271,7 @@ export default function CreateAccountScreen() {
 
           {/* Google Sign Up Button */}
           <Animated.View entering={FadeInDown.delay(700)}>
-            <TouchableOpacity
+            <PressableScale
               onPress={handleGoogleSignUp}
               disabled={loading}
               className="flex-row items-center justify-center py-4 rounded-2xl border-2"
@@ -291,7 +287,7 @@ export default function CreateAccountScreen() {
               >
                 Continue with Google
               </Text>
-            </TouchableOpacity>
+            </PressableScale>
           </Animated.View>
 
           {/* Sign In Link */}
@@ -305,14 +301,14 @@ export default function CreateAccountScreen() {
             >
               Already have an account?{" "}
             </Text>
-            <TouchableOpacity onPress={() => router.push("/sign-in")}>
+            <PressableScale onPress={() => router.push("/sign-in")}>
               <Text
                 className="text-sm font-semibold"
                 style={{ color: colors.primary }}
               >
                 Sign In
               </Text>
-            </TouchableOpacity>
+            </PressableScale>
           </Animated.View>
         </View>
       </ScrollView>

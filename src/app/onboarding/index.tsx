@@ -1,16 +1,12 @@
 import { Colors } from "@/constants/theme";
 import { useColorScheme } from "@/hooks/use-color-scheme";
+import { ScrollView, Text, PressableScale, View } from "@/tw";
+import { Animated } from "@/tw/animated";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { LinearGradient } from "expo-linear-gradient";
 import { router } from "expo-router";
 import React from "react";
 import {
-  ScrollView,
-  Text,
-  TouchableOpacity,
-  View
-} from "react-native";
-import Animated, {
   FadeInDown,
   FadeInRight,
   FadeInUp,
@@ -45,7 +41,7 @@ export default function OnboardingFirstScreen() {
     <View className="flex-1" style={{ backgroundColor: colors.background }}>
       <ScrollView
         className="flex-1"
-        contentContainerStyle={{ flexGrow: 1 }}
+        contentContainerClassName="flex-grow"
         showsVerticalScrollIndicator={false}
       >
         {/* Header with Gradient */}
@@ -141,7 +137,7 @@ export default function OnboardingFirstScreen() {
         {/* CTA Button */}
         <View className="px-6 mt-auto mb-8">
           <Animated.View entering={FadeInUp.delay(600)}>
-            <TouchableOpacity
+            <PressableScale
               onPress={() => router.push("/onboarding/final")}
               className="py-4 rounded-2xl items-center"
               style={{
@@ -154,7 +150,7 @@ export default function OnboardingFirstScreen() {
               }}
             >
               <Text className="text-lg font-bold text-white">Continue</Text>
-            </TouchableOpacity>
+            </PressableScale>
           </Animated.View>
         </View>
       </ScrollView>

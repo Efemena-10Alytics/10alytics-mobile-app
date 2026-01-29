@@ -1,30 +1,26 @@
-import React from "react";
-import {
-  View,
-  ScrollView,
-  Text,
-  TouchableOpacity,
-} from "react-native";
-import { LinearGradient } from "expo-linear-gradient";
-import Animated, {
-  FadeInDown,
-  FadeInRight,
-} from "react-native-reanimated";
 import { Colors } from "@/constants/theme";
 import { useColorScheme } from "@/hooks/use-color-scheme";
+import { ScrollView, Text, PressableScale, View } from "@/tw";
+import { Animated } from "@/tw/animated";
+import { useAuthStore } from "@/utils/auth-store";
 import {
-  User,
   Award,
   BookOpen,
   Clock,
-  Settings,
   LogOut,
-  Trophy,
+  Settings,
   Star,
   Target,
+  Trophy,
+  User,
 } from "@expo/vector-icons";
-import { useAuthStore } from "@/utils/auth-store";
+import { LinearGradient } from "expo-linear-gradient";
 import { router } from "expo-router";
+import React from "react";
+import {
+  FadeInDown,
+  FadeInRight,
+} from "react-native-reanimated";
 
 export default function ProfileScreen() {
   const colorScheme = useColorScheme();
@@ -44,28 +40,28 @@ export default function ProfileScreen() {
       title: "My Courses",
       icon: BookOpen,
       color: colors.primary,
-      onPress: () => {},
+      onPress: () => { },
     },
     {
       id: 2,
       title: "Achievements",
       icon: Award,
       color: "#9B59B6",
-      onPress: () => {},
+      onPress: () => { },
     },
     {
       id: 3,
       title: "Learning Goals",
       icon: Target,
       color: "#4A90E2",
-      onPress: () => {},
+      onPress: () => { },
     },
     {
       id: 4,
       title: "Settings",
       icon: Settings,
       color: colors.icon,
-      onPress: () => {},
+      onPress: () => { },
     },
   ];
 
@@ -79,7 +75,7 @@ export default function ProfileScreen() {
       <ScrollView
         className="flex-1"
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: 100 }}
+        contentContainerClassName="pb-[100px]"
       >
         {/* Header with Profile */}
         <LinearGradient
@@ -169,7 +165,7 @@ export default function ProfileScreen() {
                 key={item.id}
                 entering={FadeInDown.delay(600 + index * 100)}
               >
-                <TouchableOpacity
+                <PressableScale
                   onPress={item.onPress}
                   className="flex-row items-center p-4 rounded-2xl mb-3"
                   style={{
@@ -193,7 +189,7 @@ export default function ProfileScreen() {
                   >
                     {item.title}
                   </Text>
-                </TouchableOpacity>
+                </PressableScale>
               </Animated.View>
             ))}
           </Animated.View>
@@ -202,7 +198,7 @@ export default function ProfileScreen() {
         {/* Sign Out Button */}
         <View className="px-6 mt-6">
           <Animated.View entering={FadeInDown.delay(1000)}>
-            <TouchableOpacity
+            <PressableScale
               onPress={handleSignOut}
               className="flex-row items-center justify-center p-4 rounded-2xl"
               style={{
@@ -213,7 +209,7 @@ export default function ProfileScreen() {
               <Text className="text-base font-semibold text-white">
                 Sign Out
               </Text>
-            </TouchableOpacity>
+            </PressableScale>
           </Animated.View>
         </View>
       </ScrollView>

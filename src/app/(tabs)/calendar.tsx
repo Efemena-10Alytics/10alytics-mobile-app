@@ -1,15 +1,11 @@
 import { Colors } from "@/constants/theme";
 import { useColorScheme } from "@/hooks/use-color-scheme";
+import { ScrollView, Text, PressableScale, View } from "@/tw";
+import { Animated } from "@/tw/animated";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { LinearGradient } from "expo-linear-gradient";
 import React, { useState } from "react";
 import {
-  ScrollView,
-  Text,
-  TouchableOpacity,
-  View
-} from "react-native";
-import Animated, {
   FadeInDown,
   FadeInRight,
 } from "react-native-reanimated";
@@ -93,7 +89,7 @@ export default function CalendarScreen() {
       <ScrollView
         className="flex-1"
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: 100 }}
+        contentContainerClassName="pb-[100px]"
       >
         {/* Header */}
         <LinearGradient
@@ -102,7 +98,7 @@ export default function CalendarScreen() {
         >
           <Animated.View entering={FadeInDown.delay(100)}>
             <View className="flex-row items-center justify-between mb-4">
-              <TouchableOpacity
+              <PressableScale
                 onPress={() =>
                   setCurrentDate(
                     new Date(currentDate.setDate(currentDate.getDate() - 1))
@@ -110,7 +106,7 @@ export default function CalendarScreen() {
                 }
               >
                 <MaterialCommunityIcons name="chevron-left" size={24} color="#FFFFFF" />
-              </TouchableOpacity>
+              </PressableScale>
               <View className="items-center">
                 <Text
                   className="text-2xl font-bold"
@@ -131,7 +127,7 @@ export default function CalendarScreen() {
                   })}
                 </Text>
               </View>
-              <TouchableOpacity
+              <PressableScale
                 onPress={() =>
                   setCurrentDate(
                     new Date(currentDate.setDate(currentDate.getDate() + 1))
@@ -139,7 +135,7 @@ export default function CalendarScreen() {
                 }
               >
                 <MaterialCommunityIcons name="chevron-right" size={24} color="#FFFFFF" />
-              </TouchableOpacity>
+              </PressableScale>
             </View>
           </Animated.View>
         </LinearGradient>
@@ -159,7 +155,7 @@ export default function CalendarScreen() {
                   key={event.id}
                   entering={FadeInDown.delay(300 + index * 100)}
                 >
-                  <TouchableOpacity
+                  <PressableScale
                     className="mb-4 rounded-2xl p-4"
                     style={{
                       backgroundColor: colors.background,
@@ -215,7 +211,7 @@ export default function CalendarScreen() {
                         </View>
                       </View>
                     </View>
-                  </TouchableOpacity>
+                  </PressableScale>
                 </Animated.View>
               ))}
             </Animated.View>
@@ -236,7 +232,7 @@ export default function CalendarScreen() {
                 key={event.id}
                 entering={FadeInDown.delay(500 + index * 100)}
               >
-                <TouchableOpacity
+                <PressableScale
                   className="mb-4 rounded-2xl p-4"
                   style={{
                     backgroundColor: colors.background,
@@ -294,7 +290,7 @@ export default function CalendarScreen() {
                       </View>
                     </View>
                   </View>
-                </TouchableOpacity>
+                </PressableScale>
               </Animated.View>
             ))}
           </Animated.View>

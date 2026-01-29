@@ -1,28 +1,16 @@
-import React from "react";
-import {
-  View,
-  ScrollView,
-  Text,
-  TouchableOpacity,
-  Dimensions,
-} from "react-native";
-import { LinearGradient } from "expo-linear-gradient";
-import Animated, {
-  FadeInDown,
-  FadeInRight,
-  useSharedValue,
-  useAnimatedStyle,
-  withSpring,
-  withRepeat,
-  withTiming,
-} from "react-native-reanimated";
 import { Colors } from "@/constants/theme";
 import { useColorScheme } from "@/hooks/use-color-scheme";
-import { PlayCircle } from "@expo/vector-icons";
+import { ScrollView, Text, PressableScale, View } from "@/tw";
+import { Animated } from "@/tw/animated";
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
+import { LinearGradient } from "expo-linear-gradient";
+import React from "react";
+import {
+  FadeInDown,
+  FadeInRight
+} from "react-native-reanimated";
 
 // const { width } = Dimensions.get("window");
-
-const AnimatedTouchable = Animated.createAnimatedComponent(TouchableOpacity);
 
 export default function CoursesScreen() {
   const colorScheme = useColorScheme();
@@ -86,7 +74,7 @@ export default function CoursesScreen() {
       <ScrollView
         className="flex-1"
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: 100 }}
+        contentContainerClassName="pb-[100px]"
       >
         {/* Header with Gradient */}
         <LinearGradient
@@ -145,14 +133,14 @@ export default function CoursesScreen() {
               >
                 Achievements
               </Text>
-              <TouchableOpacity>
+              <PressableScale>
                 <Text
                   className="text-sm"
                   style={{ color: colors.primary }}
                 >
                   View All
                 </Text>
-              </TouchableOpacity>
+              </PressableScale>
             </View>
             <ScrollView
               horizontal
@@ -164,7 +152,7 @@ export default function CoursesScreen() {
                   key={achievement.id}
                   entering={FadeInRight.delay(400 + index * 100)}
                 >
-                  <TouchableOpacity
+                  <PressableScale
                     className="items-center justify-center rounded-2xl p-6 mr-3"
                     style={{
                       backgroundColor: colors.background,
@@ -189,7 +177,7 @@ export default function CoursesScreen() {
                     >
                       {achievement.points} pts
                     </Text>
-                  </TouchableOpacity>
+                  </PressableScale>
                 </Animated.View>
               ))}
             </ScrollView>
@@ -206,14 +194,14 @@ export default function CoursesScreen() {
               >
                 My Courses
               </Text>
-              <TouchableOpacity>
+              <PressableScale>
                 <Text
                   className="text-sm"
                   style={{ color: colors.primary }}
                 >
                   See All
                 </Text>
-              </TouchableOpacity>
+              </PressableScale>
             </View>
           </Animated.View>
 
@@ -222,7 +210,7 @@ export default function CoursesScreen() {
               key={course.id}
               entering={FadeInDown.delay(600 + index * 100)}
             >
-              <AnimatedTouchable
+              <Animated.PressableScale
                 className="mb-4 rounded-2xl overflow-hidden"
                 style={{
                   backgroundColor: colors.background,
@@ -303,14 +291,14 @@ export default function CoursesScreen() {
                     </View>
 
                     {/* Continue Button */}
-                    <TouchableOpacity
+                    <PressableScale
                       className="flex-row items-center justify-center mt-2 py-2 rounded-xl"
                       style={{ backgroundColor: `${course.color}15` }}
                     >
-                      <PlayCircle
+                      <MaterialCommunityIcons
+                        name="play-circle"
                         size={16}
                         color={course.color}
-                        style={{ marginRight: 6 }}
                       />
                       <Text
                         className="text-sm font-semibold"
@@ -318,10 +306,10 @@ export default function CoursesScreen() {
                       >
                         Continue Learning
                       </Text>
-                    </TouchableOpacity>
+                    </PressableScale>
                   </View>
                 </View>
-              </AnimatedTouchable>
+              </Animated.PressableScale>
             </Animated.View>
           ))}
         </View>

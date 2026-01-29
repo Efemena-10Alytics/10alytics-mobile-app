@@ -1,17 +1,13 @@
 import { Colors } from "@/constants/theme";
 import { useColorScheme } from "@/hooks/use-color-scheme";
+import { ScrollView, Text, PressableScale, View } from "@/tw";
+import { Animated } from "@/tw/animated";
 import { useAuthStore } from "@/utils/auth-store";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { LinearGradient } from "expo-linear-gradient";
 import { router } from "expo-router";
 import React from "react";
 import {
-  ScrollView,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
-import Animated, {
   FadeIn,
   FadeInDown,
   FadeInUp,
@@ -50,7 +46,7 @@ export default function OnboardingFinalScreen() {
     <View className="flex-1" style={{ backgroundColor: colors.background }}>
       <ScrollView
         className="flex-1"
-        contentContainerStyle={{ flexGrow: 1 }}
+        contentContainerClassName="flex-grow"
         showsVerticalScrollIndicator={false}
       >
         {/* Header with Gradient */}
@@ -139,7 +135,7 @@ export default function OnboardingFinalScreen() {
         {/* CTA Button */}
         <View className="px-6 mt-auto mb-8">
           <Animated.View entering={FadeInUp.delay(800)}>
-            <TouchableOpacity
+            <PressableScale
               onPress={handleComplete}
               className="py-4 rounded-2xl items-center"
               style={{
@@ -154,14 +150,14 @@ export default function OnboardingFinalScreen() {
               <Text className="text-lg font-bold text-white">
                 Start Learning
               </Text>
-            </TouchableOpacity>
+            </PressableScale>
           </Animated.View>
 
           <Animated.View
             entering={FadeInUp.delay(900)}
             className="mt-4"
           >
-            <TouchableOpacity
+            <PressableScale
               onPress={handleComplete}
               className="py-4 rounded-2xl items-center"
             >
@@ -171,7 +167,7 @@ export default function OnboardingFinalScreen() {
               >
                 Skip for now
               </Text>
-            </TouchableOpacity>
+            </PressableScale>
           </Animated.View>
         </View>
       </ScrollView>

@@ -1,23 +1,15 @@
-import React, { useState, useRef } from "react";
-import {
-  View,
-  ScrollView,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  KeyboardAvoidingView,
-  Platform,
-} from "react-native";
+import { Colors } from "@/constants/theme";
+import { useColorScheme } from "@/hooks/use-color-scheme";
+import { KeyboardAvoidingView, ScrollView, Text, TextInput, PressableScale, View } from "@/tw";
+import { Animated } from "@/tw/animated";
+import { Search, Send, Users } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
-import Animated, {
+import React, { useRef, useState } from "react";
+import { Platform } from "react-native";
+import {
   FadeInDown,
   FadeInRight,
 } from "react-native-reanimated";
-import { Colors } from "@/constants/theme";
-import { useColorScheme } from "@/hooks/use-color-scheme";
-import { Send, Search, Users } from "@expo/vector-icons";
-
-const AnimatedView = Animated.createAnimatedComponent(View);
 
 export default function ChatScreen() {
   const colorScheme = useColorScheme();
@@ -133,9 +125,9 @@ export default function ChatScreen() {
               >
                 Study Groups
               </Text>
-              <TouchableOpacity>
+              <PressableScale>
                 <Search size={20} color={colors.icon} />
-              </TouchableOpacity>
+              </PressableScale>
             </View>
           </Animated.View>
 
@@ -149,7 +141,7 @@ export default function ChatScreen() {
                 key={group.id}
                 entering={FadeInRight.delay(300 + index * 100)}
               >
-                <TouchableOpacity
+                <PressableScale
                   className="items-center mr-4"
                   style={{ width: 80 }}
                 >
@@ -185,7 +177,7 @@ export default function ChatScreen() {
                       {group.members}
                     </Text>
                   </View>
-                </TouchableOpacity>
+                </PressableScale>
               </Animated.View>
             ))}
           </ScrollView>
@@ -254,7 +246,7 @@ export default function ChatScreen() {
           </ScrollView>
 
           {/* Message Input */}
-          <AnimatedView
+          <Animated.View
             entering={FadeInDown.delay(600)}
             className="flex-row items-center py-4"
           >
@@ -276,14 +268,14 @@ export default function ChatScreen() {
                 multiline
               />
             </View>
-            <TouchableOpacity
+            <PressableScale
               onPress={handleSend}
               className="w-12 h-12 rounded-full items-center justify-center"
               style={{ backgroundColor: colors.primary }}
             >
               <Send size={20} color="#FFFFFF" />
-            </TouchableOpacity>
-          </AnimatedView>
+            </PressableScale>
+          </Animated.View>
         </View>
       </View>
     </KeyboardAvoidingView>
