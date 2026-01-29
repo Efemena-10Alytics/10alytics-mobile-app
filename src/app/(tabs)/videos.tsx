@@ -1,10 +1,8 @@
-import { Colors } from "@/constants/theme";
-import { useColorScheme } from "@/hooks/use-color-scheme";
-import { ScrollView, Text, PressableScale, View } from "@/tw";
+import { PressableScale, ScrollView, Text, View } from "@/tw";
 import { Animated } from "@/tw/animated";
-import { BookOpen, Clock, PlayCircle } from "@expo/vector-icons";
-import { LinearGradient } from "expo-linear-gradient";
+import { SymbolView } from "expo-symbols";
 import React, { useState } from "react";
+import { PlatformColor } from "react-native";
 import {
   FadeInDown,
   FadeInRight,
@@ -13,8 +11,6 @@ import {
 // const { width } = Dimensions.get("window");
 
 export default function VideosScreen() {
-  const colorScheme = useColorScheme();
-  const colors = Colors[colorScheme ?? "light"];
   const [selectedCategory, setSelectedCategory] = useState("All");
 
   const categories = ["All", "React", "TypeScript", "Design", "Mobile"];
@@ -67,183 +63,247 @@ export default function VideosScreen() {
   ];
 
   return (
-    <View className="flex-1" style={{ backgroundColor: colors.background }}>
-      <ScrollView
-        className="flex-1"
-        showsVerticalScrollIndicator={false}
-        contentContainerClassName="pb-[100px]"
-      >
-        {/* Header */}
-        <LinearGradient
-          colors={[colors.primary, `${colors.primary}DD`]}
-          className="pt-16 pb-6 px-6 rounded-b-3xl"
+    <ScrollView
+      contentInsetAdjustmentBehavior="automatic"
+      showsVerticalScrollIndicator={false}
+      style={{ flex: 1, backgroundColor: PlatformColor("systemBackground") }}
+      contentContainerStyle={{ paddingBottom: 100, paddingHorizontal: 16, paddingTop: 16, gap: 24 }}
+    >
+      {/* Categories */}
+      <Animated.View entering={FadeInRight.delay(100)}>
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={{ gap: 12 }}
         >
-          <Animated.View entering={FadeInDown.delay(100)}>
-            <Text
-              className="text-3xl font-bold mb-2"
-              style={{ color: "#FFFFFF" }}
+          {categories.map((category, index) => (
+            <Animated.View
+              key={category}
+              entering={FadeInRight.delay(200 + index * 50)}
             >
-              Video Library
-            </Text>
-            <Text className="text-base opacity-90" style={{ color: "#FFFFFF" }}>
-              Learn at your own pace
-            </Text>
-          </Animated.View>
-        </LinearGradient>
-
-        {/* Categories */}
-        <View className="px-6 mt-6">
-          <Animated.View entering={FadeInRight.delay(200)}>
-            <ScrollView
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              className="gap-3"
-            >
-              {categories.map((category, index) => (
-                <Animated.View
-                  key={category}
-                  entering={FadeInRight.delay(300 + index * 50)}
+              <PressableScale
+                onPress={() => setSelectedCategory(category)}
+                style={{
+                  paddingHorizontal: 16,
+                  paddingVertical: 8,
+                  borderRadius: 20,
+                  marginRight: 8,
+                  backgroundColor:
+                    selectedCategory === category
+                      ? PlatformColor("systemBlue")
+                      : PlatformColor("secondarySystemBackground"),
+                  borderCurve: "continuous",
+                }}
+              >
+                <Text
+                  style={{
+                    fontSize: 14,
+                    fontWeight: "600",
+                    color:
+                      selectedCategory === category
+                        ? PlatformColor("label")
+                        : PlatformColor("systemBlue"),
+                  }}
                 >
-                  <PressableScale
-                    onPress={() => setSelectedCategory(category)}
-                    className="px-4 py-2 rounded-full mr-2"
+                  {category}
+                </Text>
+              </PressableScale>
+            </Animated.View>
+          ))}
+        </ScrollView>
+      </Animated.View>
+
+      {/* Video List */}
+      {videos
+        .filter(
+          (video) =>
+            selectedCategory === "All" || video.category === selectedCategory
+        )
+        .map((video, index) => (
+          <Animated.View
+            key={video.id}
+            entering={FadeInDown.delay(300 + index * 100)}
+          >
+            <Animated.PressableScale
+              style={{
+                marginBottom: 16,
+                borderRadius: 16,
+                overflow: "hidden",
+                backgroundColor: PlatformColor("secondarySystemBackground"),
+                borderCurve: "continuous",
+                boxShadow: "0 1px 3px rgba(0, 0, 0, 0.1)",
+              }}
+            >
+              {/* Video Thumbnail */}
+              <View
+                style={{
+                  width: "100%",
+                  height: 192,
+                  alignItems: "center",
+                  justifyContent: "center",
+                  position: "relative",
+                  backgroundColor: PlatformColor("tertiarySystemBackground"),
+                }}
+              >
+                <Text style={{ fontSize: 64 }}>{video.thumbnail}</Text>
+                <View
+                  style={{
+                    position: "absolute",
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
+                  <View
                     style={{
-                      backgroundColor:
-                        selectedCategory === category
-                          ? colors.primary
-                          : `${colors.primary}15`,
+                      width: 64,
+                      height: 64,
+                      borderRadius: 32,
+                      alignItems: "center",
+                      justifyContent: "center",
+                      backgroundColor: "rgba(0,0,0,0.6)",
+                    }}
+                  >
+                    <SymbolView
+                      name="play.circle.fill"
+                      size={32}
+                      tintColor={PlatformColor("label")}
+                      type="hierarchical"
+                    />
+                  </View>
+                </View>
+                {video.progress > 0 && (
+                  <View
+                    style={{
+                      position: "absolute",
+                      bottom: 0,
+                      left: 0,
+                      right: 0,
+                      height: 4,
+                      backgroundColor: "rgba(0,0,0,0.2)",
+                    }}
+                  >
+                    <View
+                      style={{
+                        height: 4,
+                        width: `${video.progress}%`,
+                        backgroundColor: PlatformColor("systemBlue"),
+                      }}
+                    />
+                  </View>
+                )}
+                {video.watched && (
+                  <View
+                    style={{
+                      position: "absolute",
+                      top: 8,
+                      right: 8,
+                      paddingHorizontal: 8,
+                      paddingVertical: 4,
+                      borderRadius: 12,
+                      backgroundColor: PlatformColor("systemBlue"),
+                      borderCurve: "continuous",
                     }}
                   >
                     <Text
-                      className="text-sm font-semibold"
                       style={{
-                        color:
-                          selectedCategory === category
-                            ? "#FFFFFF"
-                            : colors.primary,
+                        fontSize: 12,
+                        fontWeight: "600",
+                        color: PlatformColor("label"),
                       }}
                     >
-                      {category}
+                      Watched
                     </Text>
-                  </PressableScale>
-                </Animated.View>
-              ))}
-            </ScrollView>
-          </Animated.View>
-        </View>
+                  </View>
+                )}
+              </View>
 
-        {/* Video List */}
-        <View className="px-6 mt-6">
-          {videos
-            .filter(
-              (video) =>
-                selectedCategory === "All" || video.category === selectedCategory
-            )
-            .map((video, index) => (
-              <Animated.View
-                key={video.id}
-                entering={FadeInDown.delay(400 + index * 100)}
-              >
-                <Animated.PressableScale
-                  className="mb-4 rounded-2xl overflow-hidden"
+              {/* Video Info */}
+              <View style={{ padding: 16 }}>
+                <Text
+                  selectable
                   style={{
-                    backgroundColor: colors.background,
-                    shadowColor: "#000",
-                    shadowOffset: { width: 0, height: 2 },
-                    shadowOpacity: 0.1,
-                    shadowRadius: 8,
-                    elevation: 3,
+                    fontSize: 18,
+                    fontWeight: "700",
+                    marginBottom: 8,
+                    color: PlatformColor("label"),
                   }}
                 >
-                  {/* Video Thumbnail */}
-                  <View
-                    className="w-full h-48 items-center justify-center relative"
-                    style={{ backgroundColor: `${colors.primary}20` }}
-                  >
-                    <Text className="text-6xl">{video.thumbnail}</Text>
-                    <View className="absolute inset-0 items-center justify-center">
-                      <View
-                        className="w-16 h-16 rounded-full items-center justify-center"
-                        style={{ backgroundColor: "rgba(0,0,0,0.6)" }}
+                  {video.title}
+                </Text>
+                <Text
+                  selectable
+                  style={{
+                    fontSize: 14,
+                    marginBottom: 12,
+                    color: PlatformColor("secondaryLabel"),
+                  }}
+                >
+                  {video.instructor}
+                </Text>
+
+                <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
+                  <View style={{ flexDirection: "row", alignItems: "center", gap: 16 }}>
+                    <View style={{ flexDirection: "row", alignItems: "center" }}>
+                      <SymbolView
+                        name="clock.fill"
+                        size={14}
+                        tintColor={PlatformColor("secondaryLabel")}
+                        type="hierarchical"
+                      />
+                      <Text
+                        selectable
+                        style={{
+                          fontSize: 12,
+                          marginLeft: 4,
+                          color: PlatformColor("secondaryLabel"),
+                        }}
                       >
-                        <PlayCircle size={32} color="#FFFFFF" />
-                      </View>
+                        {video.duration}
+                      </Text>
                     </View>
-                    {video.progress > 0 && (
-                      <View className="absolute bottom-0 left-0 right-0 h-1 bg-black/20">
-                        <View
-                          className="h-1"
-                          style={{
-                            width: `${video.progress}%`,
-                            backgroundColor: colors.primary,
-                          }}
-                        />
-                      </View>
-                    )}
-                    {video.watched && (
-                      <View
-                        className="absolute top-2 right-2 px-2 py-1 rounded-full"
-                        style={{ backgroundColor: colors.primary }}
+                    <View style={{ flexDirection: "row", alignItems: "center" }}>
+                      <SymbolView
+                        name="eye.fill"
+                        size={14}
+                        tintColor={PlatformColor("secondaryLabel")}
+                        type="hierarchical"
+                      />
+                      <Text
+                        selectable
+                        style={{
+                          fontSize: 12,
+                          marginLeft: 4,
+                          color: PlatformColor("secondaryLabel"),
+                          fontVariant: ["tabular-nums"],
+                        }}
                       >
-                        <Text className="text-xs font-semibold text-white">
-                          Watched
-                        </Text>
-                      </View>
-                    )}
-                  </View>
-
-                  {/* Video Info */}
-                  <View className="p-4">
-                    <Text
-                      className="text-lg font-bold mb-2"
-                      style={{ color: colors.text }}
-                    >
-                      {video.title}
-                    </Text>
-                    <Text
-                      className="text-sm mb-3"
-                      style={{ color: colors.icon }}
-                    >
-                      {video.instructor}
-                    </Text>
-
-                    <View className="flex-row items-center justify-between">
-                      <View className="flex-row items-center gap-4">
-                        <View className="flex-row items-center">
-                          <Clock size={14} color={colors.icon} />
-                          <Text
-                            className="text-xs ml-1"
-                            style={{ color: colors.icon }}
-                          >
-                            {video.duration}
-                          </Text>
-                        </View>
-                        <View className="flex-row items-center">
-                          <BookOpen size={14} color={colors.icon} />
-                          <Text
-                            className="text-xs ml-1"
-                            style={{ color: colors.icon }}
-                          >
-                            {video.views} views
-                          </Text>
-                        </View>
-                      </View>
-
-                      {video.progress > 0 && (
-                        <Text
-                          className="text-xs font-semibold"
-                          style={{ color: colors.primary }}
-                        >
-                          {video.progress}% complete
-                        </Text>
-                      )}
+                        {video.views} views
+                      </Text>
                     </View>
                   </View>
-                </Animated.PressableScale>
-              </Animated.View>
-            ))}
-        </View>
-      </ScrollView>
-    </View>
+
+                  {video.progress > 0 && (
+                    <Text
+                      selectable
+                      style={{
+                        fontSize: 12,
+                        fontWeight: "600",
+                        color: PlatformColor("systemBlue"),
+                        fontVariant: ["tabular-nums"],
+                      }}
+                    >
+                      {video.progress}% complete
+                    </Text>
+                  )}
+                </View>
+              </View>
+            </Animated.PressableScale>
+          </Animated.View>
+        ))}
+    </ScrollView>
   );
 }

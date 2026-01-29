@@ -1,10 +1,8 @@
-import { Colors } from "@/constants/theme";
-import { useColorScheme } from "@/hooks/use-color-scheme";
-import { ScrollView, Text, PressableScale, View } from "@/tw";
+import { PressableScale, ScrollView, Text, View } from "@/tw";
 import { Animated } from "@/tw/animated";
-import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
-import { LinearGradient } from "expo-linear-gradient";
+import { SymbolView } from "expo-symbols";
 import React from "react";
+import { PlatformColor } from "react-native";
 import {
   FadeInDown,
   FadeInRight
@@ -13,8 +11,6 @@ import {
 // const { width } = Dimensions.get("window");
 
 export default function CoursesScreen() {
-  const colorScheme = useColorScheme();
-  const colors = Colors[colorScheme ?? "light"];
 
   // Animation values for future use
   // const progress1 = useSharedValue(0);
@@ -70,250 +66,335 @@ export default function CoursesScreen() {
   ];
 
   return (
-    <View className="flex-1" style={{ backgroundColor: colors.background }}>
-      <ScrollView
-        className="flex-1"
-        showsVerticalScrollIndicator={false}
-        contentContainerClassName="pb-[100px]"
+    <ScrollView
+      contentInsetAdjustmentBehavior="automatic"
+      showsVerticalScrollIndicator={false}
+      style={{ flex: 1, backgroundColor: PlatformColor("systemBackground") }}
+      contentContainerStyle={{ paddingBottom: 100, paddingHorizontal: 16, paddingTop: 16, gap: 24 }}
+    >
+      {/* Stats Cards */}
+      <Animated.View
+        entering={FadeInDown.delay(100)}
+        style={{ flexDirection: "row", gap: 12 }}
       >
-        {/* Header with Gradient */}
-        <LinearGradient
-          colors={[colors.primary, `${colors.primary}DD`]}
-          className="pt-16 pb-8 px-6 rounded-b-3xl"
+        <View
+          style={{
+            flex: 1,
+            backgroundColor: PlatformColor("secondarySystemBackground"),
+            borderRadius: 16,
+            padding: 16,
+            borderCurve: "continuous",
+            boxShadow: "0 1px 2px rgba(0, 0, 0, 0.05)",
+          }}
         >
-          <Animated.View entering={FadeInDown.delay(100)}>
-            <Text
-              className="text-3xl font-bold mb-2"
-              style={{ color: "#FFFFFF" }}
-            >
-              My Learning
-            </Text>
-            <Text className="text-base opacity-90" style={{ color: "#FFFFFF" }}>
-              Continue your journey to mastery
-            </Text>
-          </Animated.View>
-
-          {/* Stats Cards */}
-          <Animated.View
-            entering={FadeInDown.delay(200)}
-            className="flex-row mt-6 gap-3"
+          <Text
+            selectable
+            style={{
+              fontSize: 24,
+              fontWeight: "700",
+              color: PlatformColor("label"),
+              fontVariant: ["tabular-nums"],
+            }}
           >
-            <View
-              className="flex-1 bg-white/20 rounded-2xl p-4 backdrop-blur"
-              style={{ backgroundColor: "rgba(255,255,255,0.2)" }}
-            >
-              <Text className="text-2xl font-bold" style={{ color: "#FFFFFF" }}>
-                3
-              </Text>
-              <Text className="text-sm opacity-90" style={{ color: "#FFFFFF" }}>
-                Active Courses
-              </Text>
-            </View>
-            <View
-              className="flex-1 bg-white/20 rounded-2xl p-4"
-              style={{ backgroundColor: "rgba(255,255,255,0.2)" }}
-            >
-              <Text className="text-2xl font-bold" style={{ color: "#FFFFFF" }}>
-                48
-              </Text>
-              <Text className="text-sm opacity-90" style={{ color: "#FFFFFF" }}>
-                Lessons Done
-              </Text>
-            </View>
-          </Animated.View>
-        </LinearGradient>
-
-        {/* Achievements Section */}
-        <View className="px-6 mt-6">
-          <Animated.View entering={FadeInRight.delay(300)}>
-            <View className="flex-row items-center justify-between mb-4">
-              <Text
-                className="text-xl font-bold"
-                style={{ color: colors.text }}
-              >
-                Achievements
-              </Text>
-              <PressableScale>
-                <Text
-                  className="text-sm"
-                  style={{ color: colors.primary }}
-                >
-                  View All
-                </Text>
-              </PressableScale>
-            </View>
-            <ScrollView
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              className="gap-3"
-            >
-              {achievements.map((achievement, index) => (
-                <Animated.View
-                  key={achievement.id}
-                  entering={FadeInRight.delay(400 + index * 100)}
-                >
-                  <PressableScale
-                    className="items-center justify-center rounded-2xl p-6 mr-3"
-                    style={{
-                      backgroundColor: colors.background,
-                      width: 120,
-                      shadowColor: colors.primary,
-                      shadowOffset: { width: 0, height: 2 },
-                      shadowOpacity: 0.1,
-                      shadowRadius: 8,
-                      elevation: 3,
-                    }}
-                  >
-                    <Text className="text-4xl mb-2">{achievement.icon}</Text>
-                    <Text
-                      className="text-sm font-semibold text-center"
-                      style={{ color: colors.text }}
-                    >
-                      {achievement.title}
-                    </Text>
-                    <Text
-                      className="text-xs mt-1"
-                      style={{ color: colors.primary }}
-                    >
-                      {achievement.points} pts
-                    </Text>
-                  </PressableScale>
-                </Animated.View>
-              ))}
-            </ScrollView>
-          </Animated.View>
+            3
+          </Text>
+          <Text
+            style={{
+              fontSize: 14,
+              color: PlatformColor("secondaryLabel"),
+              marginTop: 4,
+            }}
+          >
+            Active Courses
+          </Text>
         </View>
+        <View
+          style={{
+            flex: 1,
+            backgroundColor: PlatformColor("secondarySystemBackground"),
+            borderRadius: 16,
+            padding: 16,
+            borderCurve: "continuous",
+            boxShadow: "0 1px 2px rgba(0, 0, 0, 0.05)",
+          }}
+        >
+          <Text
+            selectable
+            style={{
+              fontSize: 24,
+              fontWeight: "700",
+              color: PlatformColor("label"),
+              fontVariant: ["tabular-nums"],
+            }}
+          >
+            48
+          </Text>
+          <Text
+            style={{
+              fontSize: 14,
+              color: PlatformColor("secondaryLabel"),
+              marginTop: 4,
+            }}
+          >
+            Lessons Done
+          </Text>
+        </View>
+      </Animated.View>
 
-        {/* Courses Section */}
-        <View className="px-6 mt-6">
-          <Animated.View entering={FadeInRight.delay(500)}>
-            <View className="flex-row items-center justify-between mb-4">
-              <Text
-                className="text-xl font-bold"
-                style={{ color: colors.text }}
-              >
-                My Courses
-              </Text>
-              <PressableScale>
-                <Text
-                  className="text-sm"
-                  style={{ color: colors.primary }}
-                >
-                  See All
-                </Text>
-              </PressableScale>
-            </View>
-          </Animated.View>
-
-          {courses.map((course, index) => (
-            <Animated.View
-              key={course.id}
-              entering={FadeInDown.delay(600 + index * 100)}
+      {/* Achievements Section */}
+      <Animated.View entering={FadeInRight.delay(200)}>
+        <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
+          <Text
+            style={{
+              fontSize: 20,
+              fontWeight: "700",
+              color: PlatformColor("label"),
+            }}
+          >
+            Achievements
+          </Text>
+          <PressableScale>
+            <Text
+              style={{
+                fontSize: 14,
+                color: PlatformColor("systemBlue"),
+              }}
             >
-              <Animated.PressableScale
-                className="mb-4 rounded-2xl overflow-hidden"
+              View All
+            </Text>
+          </PressableScale>
+        </View>
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={{ gap: 12 }}
+        >
+          {achievements.map((achievement, index) => (
+            <Animated.View
+              key={achievement.id}
+              entering={FadeInRight.delay(300 + index * 100)}
+            >
+              <PressableScale
                 style={{
-                  backgroundColor: colors.background,
-                  shadowColor: "#000",
-                  shadowOffset: { width: 0, height: 2 },
-                  shadowOpacity: 0.1,
-                  shadowRadius: 8,
-                  elevation: 3,
+                  alignItems: "center",
+                  justifyContent: "center",
+                  borderRadius: 16,
+                  padding: 24,
+                  width: 120,
+                  backgroundColor: PlatformColor("secondarySystemBackground"),
+                  borderCurve: "continuous",
+                  boxShadow: "0 1px 3px rgba(0, 0, 0, 0.1)",
+                  marginRight: 12,
                 }}
               >
-                <View className="flex-row">
-                  {/* Course Thumbnail */}
-                  <View
-                    className="w-24 h-24 items-center justify-center"
-                    style={{ backgroundColor: `${course.color}20` }}
-                  >
-                    <Text className="text-5xl">{course.thumbnail}</Text>
-                  </View>
-
-                  {/* Course Info */}
-                  <View className="flex-1 p-4">
-                    <View className="flex-row items-center justify-between mb-2">
-                      <Text
-                        className="text-base font-bold flex-1"
-                        style={{ color: colors.text }}
-                        numberOfLines={1}
-                      >
-                        {course.title}
-                      </Text>
-                      <View
-                        className="px-2 py-1 rounded-full"
-                        style={{ backgroundColor: `${course.color}20` }}
-                      >
-                        <Text
-                          className="text-xs font-semibold"
-                          style={{ color: course.color }}
-                        >
-                          {course.level}
-                        </Text>
-                      </View>
-                    </View>
-
-                    <Text
-                      className="text-sm mb-3"
-                      style={{ color: colors.icon }}
-                    >
-                      {course.instructor} • {course.lessons} lessons
-                    </Text>
-
-                    {/* Progress Bar */}
-                    <View className="mb-2">
-                      <View
-                        className="h-2 rounded-full"
-                        style={{ backgroundColor: `${course.color}20` }}
-                      >
-                        <Animated.View
-                          className="h-2 rounded-full"
-                          style={{
-                            backgroundColor: course.color,
-                            width: `${course.progress}%`,
-                          }}
-                        />
-                      </View>
-                      <View className="flex-row items-center justify-between mt-1">
-                        <Text
-                          className="text-xs"
-                          style={{ color: colors.icon }}
-                        >
-                          {course.completed}/{course.lessons} completed
-                        </Text>
-                        <Text
-                          className="text-xs font-semibold"
-                          style={{ color: course.color }}
-                        >
-                          {course.progress}%
-                        </Text>
-                      </View>
-                    </View>
-
-                    {/* Continue Button */}
-                    <PressableScale
-                      className="flex-row items-center justify-center mt-2 py-2 rounded-xl"
-                      style={{ backgroundColor: `${course.color}15` }}
-                    >
-                      <MaterialCommunityIcons
-                        name="play-circle"
-                        size={16}
-                        color={course.color}
-                      />
-                      <Text
-                        className="text-sm font-semibold"
-                        style={{ color: course.color }}
-                      >
-                        Continue Learning
-                      </Text>
-                    </PressableScale>
-                  </View>
-                </View>
-              </Animated.PressableScale>
+                <Text style={{ fontSize: 36, marginBottom: 8 }}>{achievement.icon}</Text>
+                <Text
+                  selectable
+                  style={{
+                    fontSize: 14,
+                    fontWeight: "600",
+                    textAlign: "center",
+                    color: PlatformColor("label"),
+                  }}
+                >
+                  {achievement.title}
+                </Text>
+                <Text
+                  selectable
+                  style={{
+                    fontSize: 12,
+                    marginTop: 4,
+                    color: PlatformColor("systemBlue"),
+                  }}
+                >
+                  {achievement.points} pts
+                </Text>
+              </PressableScale>
             </Animated.View>
           ))}
+        </ScrollView>
+      </Animated.View>
+
+      {/* Courses Section */}
+      <Animated.View entering={FadeInRight.delay(400)}>
+        <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
+          <Text
+            style={{
+              fontSize: 20,
+              fontWeight: "700",
+              color: PlatformColor("label"),
+            }}
+          >
+            My Courses
+          </Text>
+          <PressableScale>
+            <Text
+              style={{
+                fontSize: 14,
+                color: PlatformColor("systemBlue"),
+              }}
+            >
+              See All
+            </Text>
+          </PressableScale>
         </View>
-      </ScrollView>
-    </View>
+      </Animated.View>
+
+      {courses.map((course, index) => (
+        <Animated.View
+          key={course.id}
+          entering={FadeInDown.delay(500 + index * 100)}
+        >
+          <Animated.PressableScale
+            style={{
+              marginBottom: 16,
+              borderRadius: 16,
+              overflow: "hidden",
+              backgroundColor: PlatformColor("secondarySystemBackground"),
+              borderCurve: "continuous",
+              boxShadow: "0 1px 3px rgba(0, 0, 0, 0.1)",
+            }}
+          >
+            <View style={{ flexDirection: "row" }}>
+              {/* Course Thumbnail */}
+              <View
+                style={{
+                  width: 96,
+                  height: 96,
+                  alignItems: "center",
+                  justifyContent: "center",
+                  backgroundColor: `${course.color}20`,
+                }}
+              >
+                <Text style={{ fontSize: 48 }}>{course.thumbnail}</Text>
+              </View>
+
+              {/* Course Info */}
+              <View style={{ flex: 1, padding: 16 }}>
+                <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginBottom: 8 }}>
+                  <Text
+                    selectable
+                    style={{
+                      fontSize: 16,
+                      fontWeight: "700",
+                      flex: 1,
+                      color: PlatformColor("label"),
+                    }}
+                    numberOfLines={1}
+                  >
+                    {course.title}
+                  </Text>
+                  <View
+                    style={{
+                      paddingHorizontal: 8,
+                      paddingVertical: 4,
+                      borderRadius: 12,
+                      backgroundColor: `${course.color}20`,
+                      borderCurve: "continuous",
+                    }}
+                  >
+                    <Text
+                      style={{
+                        fontSize: 12,
+                        fontWeight: "600",
+                        color: course.color,
+                      }}
+                    >
+                      {course.level}
+                    </Text>
+                  </View>
+                </View>
+
+                <Text
+                  selectable
+                  style={{
+                    fontSize: 14,
+                    marginBottom: 12,
+                    color: PlatformColor("secondaryLabel"),
+                  }}
+                >
+                  {course.instructor} • {course.lessons} lessons
+                </Text>
+
+                {/* Progress Bar */}
+                <View style={{ marginBottom: 8 }}>
+                  <View
+                    style={{
+                      height: 8,
+                      borderRadius: 4,
+                      backgroundColor: `${course.color}20`,
+                      overflow: "hidden",
+                    }}
+                  >
+                    <Animated.View
+                      style={{
+                        height: 8,
+                        borderRadius: 4,
+                        backgroundColor: course.color,
+                        width: `${course.progress}%`,
+                      }}
+                    />
+                  </View>
+                  <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginTop: 4 }}>
+                    <Text
+                      selectable
+                      style={{
+                        fontSize: 12,
+                        color: PlatformColor("secondaryLabel"),
+                        fontVariant: ["tabular-nums"],
+                      }}
+                    >
+                      {course.completed}/{course.lessons} completed
+                    </Text>
+                    <Text
+                      selectable
+                      style={{
+                        fontSize: 12,
+                        fontWeight: "600",
+                        color: course.color,
+                        fontVariant: ["tabular-nums"],
+                      }}
+                    >
+                      {course.progress}%
+                    </Text>
+                  </View>
+                </View>
+
+                {/* Continue Button */}
+                <PressableScale
+                  style={{
+                    flexDirection: "row",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    marginTop: 8,
+                    paddingVertical: 8,
+                    borderRadius: 12,
+                    backgroundColor: `${course.color}15`,
+                    borderCurve: "continuous",
+                  }}
+                >
+                  <SymbolView
+                    name="play.circle.fill"
+                    size={16}
+                    tintColor={course.color}
+                    type="hierarchical"
+                  />
+                  <Text
+                    style={{
+                      fontSize: 14,
+                      fontWeight: "600",
+                      color: course.color,
+                      marginLeft: 6,
+                    }}
+                  >
+                    Continue Learning
+                  </Text>
+                </PressableScale>
+              </View>
+            </View>
+          </Animated.PressableScale>
+        </Animated.View>
+      ))}
+    </ScrollView>
   );
 }

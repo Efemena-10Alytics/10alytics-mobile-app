@@ -1,19 +1,14 @@
-import { Colors } from "@/constants/theme";
-import { useColorScheme } from "@/hooks/use-color-scheme";
-import { KeyboardAvoidingView, ScrollView, Text, TextInput, PressableScale, View } from "@/tw";
+import { KeyboardAvoidingView, PressableScale, ScrollView, Text, TextInput, View } from "@/tw";
 import { Animated } from "@/tw/animated";
-import { Search, Send, Users } from "@expo/vector-icons";
-import { LinearGradient } from "expo-linear-gradient";
+import { SymbolView } from "expo-symbols";
 import React, { useRef, useState } from "react";
-import { Platform } from "react-native";
+import { Platform, PlatformColor } from "react-native";
 import {
   FadeInDown,
   FadeInRight,
 } from "react-native-reanimated";
 
 export default function ChatScreen() {
-  const colorScheme = useColorScheme();
-  const colors = Colors[colorScheme ?? "light"];
   const [message, setMessage] = useState("");
   const scrollViewRef = useRef<ScrollView>(null);
 
@@ -92,41 +87,30 @@ export default function ChatScreen() {
 
   return (
     <KeyboardAvoidingView
-      className="flex-1"
+      style={{ flex: 1, backgroundColor: PlatformColor("systemBackground") }}
       behavior={Platform.OS === "ios" ? "padding" : "height"}
-      style={{ backgroundColor: colors.background }}
     >
-      <View className="flex-1">
-        {/* Header */}
-        <LinearGradient
-          colors={[colors.primary, `${colors.primary}DD`]}
-          className="pt-16 pb-6 px-6 rounded-b-3xl"
-        >
-          <Animated.View entering={FadeInDown.delay(100)}>
-            <Text
-              className="text-3xl font-bold mb-2"
-              style={{ color: "#FFFFFF" }}
-            >
-              Group Chat
-            </Text>
-            <Text className="text-base opacity-90" style={{ color: "#FFFFFF" }}>
-              Connect with your learning community
-            </Text>
-          </Animated.View>
-        </LinearGradient>
-
+      <View style={{ flex: 1 }}>
         {/* Groups List */}
-        <View className="px-6 mt-6">
-          <Animated.View entering={FadeInRight.delay(200)}>
-            <View className="flex-row items-center justify-between mb-4">
+        <View style={{ paddingHorizontal: 16, paddingTop: 16 }}>
+          <Animated.View entering={FadeInRight.delay(100)}>
+            <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
               <Text
-                className="text-xl font-bold"
-                style={{ color: colors.text }}
+                style={{
+                  fontSize: 20,
+                  fontWeight: "700",
+                  color: PlatformColor("label"),
+                }}
               >
                 Study Groups
               </Text>
               <PressableScale>
-                <Search size={20} color={colors.icon} />
+                <SymbolView
+                  name="magnifyingglass"
+                  size={20}
+                  tintColor={PlatformColor("label")}
+                  type="hierarchical"
+                />
               </PressableScale>
             </View>
           </Animated.View>
@@ -134,45 +118,84 @@ export default function ChatScreen() {
           <ScrollView
             horizontal
             showsHorizontalScrollIndicator={false}
-            className="mb-6"
+            contentContainerStyle={{ marginBottom: 24, gap: 16 }}
           >
             {groups.map((group, index) => (
               <Animated.View
                 key={group.id}
-                entering={FadeInRight.delay(300 + index * 100)}
+                entering={FadeInRight.delay(200 + index * 100)}
               >
                 <PressableScale
-                  className="items-center mr-4"
-                  style={{ width: 80 }}
+                  style={{ alignItems: "center", width: 80 }}
                 >
                   <View
-                    className="w-16 h-16 rounded-2xl items-center justify-center mb-2 relative"
-                    style={{ backgroundColor: `${colors.primary}20` }}
+                    style={{
+                      width: 64,
+                      height: 64,
+                      borderRadius: 16,
+                      alignItems: "center",
+                      justifyContent: "center",
+                      marginBottom: 8,
+                      position: "relative",
+                      backgroundColor: PlatformColor("secondarySystemBackground"),
+                      borderCurve: "continuous",
+                    }}
                   >
-                    <Text className="text-3xl">{group.avatar}</Text>
+                    <Text style={{ fontSize: 32 }}>{group.avatar}</Text>
                     {group.unread > 0 && (
                       <View
-                        className="absolute -top-1 -right-1 w-5 h-5 rounded-full items-center justify-center"
-                        style={{ backgroundColor: colors.primary }}
+                        style={{
+                          position: "absolute",
+                          top: -4,
+                          right: -4,
+                          width: 20,
+                          height: 20,
+                          borderRadius: 10,
+                          alignItems: "center",
+                          justifyContent: "center",
+                          backgroundColor: PlatformColor("systemRed"),
+                        }}
                       >
-                        <Text className="text-xs font-bold text-white">
+                        <Text
+                          selectable
+                          style={{
+                            fontSize: 12,
+                            fontWeight: "700",
+                            color: PlatformColor("label"),
+                          }}
+                        >
                           {group.unread}
                         </Text>
                       </View>
                     )}
                   </View>
                   <Text
-                    className="text-xs text-center font-semibold"
-                    style={{ color: colors.text }}
+                    selectable
+                    style={{
+                      fontSize: 12,
+                      textAlign: "center",
+                      fontWeight: "600",
+                      color: PlatformColor("label"),
+                    }}
                     numberOfLines={2}
                   >
                     {group.name}
                   </Text>
-                  <View className="flex-row items-center mt-1">
-                    <Users size={10} color={colors.icon} />
+                  <View style={{ flexDirection: "row", alignItems: "center", marginTop: 4 }}>
+                    <SymbolView
+                      name="person.2.fill"
+                      size={10}
+                      tintColor={PlatformColor("secondaryLabel")}
+                      type="hierarchical"
+                    />
                     <Text
-                      className="text-xs ml-1"
-                      style={{ color: colors.icon }}
+                      selectable
+                      style={{
+                        fontSize: 12,
+                        marginLeft: 4,
+                        color: PlatformColor("secondaryLabel"),
+                        fontVariant: ["tabular-nums"],
+                      }}
                     >
                       {group.members}
                     </Text>
@@ -184,11 +207,15 @@ export default function ChatScreen() {
         </View>
 
         {/* Messages */}
-        <View className="flex-1 px-6">
-          <Animated.View entering={FadeInRight.delay(400)}>
+        <View style={{ flex: 1, paddingHorizontal: 16 }}>
+          <Animated.View entering={FadeInRight.delay(300)}>
             <Text
-              className="text-xl font-bold mb-4"
-              style={{ color: colors.text }}
+              style={{
+                fontSize: 20,
+                fontWeight: "700",
+                marginBottom: 16,
+                color: PlatformColor("label"),
+              }}
             >
               Recent Messages
             </Text>
@@ -196,46 +223,62 @@ export default function ChatScreen() {
 
           <ScrollView
             ref={scrollViewRef}
-            className="flex-1"
+            style={{ flex: 1 }}
             showsVerticalScrollIndicator={false}
+            contentInsetAdjustmentBehavior="automatic"
           >
             {messages.map((msg, index) => (
               <Animated.View
                 key={msg.id}
-                entering={FadeInDown.delay(500 + index * 100)}
-                className={`mb-4 ${msg.isMe ? "items-end" : "items-start"}`}
+                entering={FadeInDown.delay(400 + index * 100)}
+                style={{
+                  marginBottom: 16,
+                  alignItems: msg.isMe ? "flex-end" : "flex-start",
+                }}
               >
                 <View
-                  className="max-w-[80%] rounded-2xl p-4"
                   style={{
+                    maxWidth: "80%",
+                    borderRadius: 16,
+                    padding: 16,
                     backgroundColor: msg.isMe
-                      ? colors.primary
-                      : `${colors.primary}15`,
+                      ? PlatformColor("systemBlue")
+                      : PlatformColor("secondarySystemBackground"),
+                    borderCurve: "continuous",
                   }}
                 >
                   {!msg.isMe && (
-                    <View className="flex-row items-center mb-2">
-                      <Text className="text-2xl mr-2">{msg.avatar}</Text>
+                    <View style={{ flexDirection: "row", alignItems: "center", marginBottom: 8 }}>
+                      <Text style={{ fontSize: 20, marginRight: 8 }}>{msg.avatar}</Text>
                       <Text
-                        className="text-sm font-semibold"
-                        style={{ color: colors.text }}
+                        selectable
+                        style={{
+                          fontSize: 14,
+                          fontWeight: "600",
+                          color: PlatformColor("label"),
+                        }}
                       >
                         {msg.sender}
                       </Text>
                     </View>
                   )}
                   <Text
-                    className="text-base"
+                    selectable
                     style={{
-                      color: msg.isMe ? "#FFFFFF" : colors.text,
+                      fontSize: 16,
+                      color: msg.isMe ? PlatformColor("label") : PlatformColor("label"),
                     }}
                   >
                     {msg.message}
                   </Text>
                   <Text
-                    className="text-xs mt-2"
+                    selectable
                     style={{
-                      color: msg.isMe ? "rgba(255,255,255,0.7)" : colors.icon,
+                      fontSize: 12,
+                      marginTop: 8,
+                      color: msg.isMe
+                        ? PlatformColor("secondaryLabel")
+                        : PlatformColor("secondaryLabel"),
                     }}
                   >
                     {msg.time}
@@ -247,22 +290,36 @@ export default function ChatScreen() {
 
           {/* Message Input */}
           <Animated.View
-            entering={FadeInDown.delay(600)}
-            className="flex-row items-center py-4"
+            entering={FadeInDown.delay(500)}
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              paddingVertical: 16,
+            }}
           >
             <View
-              className="flex-1 flex-row items-center rounded-2xl px-4 mr-3"
               style={{
-                backgroundColor: `${colors.primary}10`,
+                flex: 1,
+                flexDirection: "row",
+                alignItems: "center",
+                borderRadius: 16,
+                paddingHorizontal: 16,
+                marginRight: 12,
+                backgroundColor: PlatformColor("secondarySystemBackground"),
                 borderWidth: 1,
-                borderColor: `${colors.primary}30`,
+                borderColor: PlatformColor("separator"),
+                borderCurve: "continuous",
               }}
             >
               <TextInput
-                className="flex-1 py-3 text-base"
-                style={{ color: colors.text }}
+                style={{
+                  flex: 1,
+                  paddingVertical: 12,
+                  fontSize: 16,
+                  color: PlatformColor("label"),
+                }}
                 placeholder="Type a message..."
-                placeholderTextColor={colors.icon}
+                placeholderTextColor={PlatformColor("placeholderText")}
                 value={message}
                 onChangeText={setMessage}
                 multiline
@@ -270,10 +327,21 @@ export default function ChatScreen() {
             </View>
             <PressableScale
               onPress={handleSend}
-              className="w-12 h-12 rounded-full items-center justify-center"
-              style={{ backgroundColor: colors.primary }}
+              style={{
+                width: 48,
+                height: 48,
+                borderRadius: 24,
+                alignItems: "center",
+                justifyContent: "center",
+                backgroundColor: PlatformColor("systemBlue"),
+              }}
             >
-              <Send size={20} color="#FFFFFF" />
+              <SymbolView
+                name="arrow.up.circle.fill"
+                size={20}
+                tintColor={PlatformColor("label")}
+                type="hierarchical"
+              />
             </PressableScale>
           </Animated.View>
         </View>

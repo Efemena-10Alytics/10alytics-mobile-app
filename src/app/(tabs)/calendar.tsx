@@ -1,10 +1,8 @@
-import { Colors } from "@/constants/theme";
-import { useColorScheme } from "@/hooks/use-color-scheme";
-import { ScrollView, Text, PressableScale, View } from "@/tw";
+import { PressableScale, ScrollView, Text, View } from "@/tw";
 import { Animated } from "@/tw/animated";
-import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
-import { LinearGradient } from "expo-linear-gradient";
+import { SymbolView } from "expo-symbols";
 import React, { useState } from "react";
+import { PlatformColor } from "react-native";
 import {
   FadeInDown,
   FadeInRight,
@@ -14,8 +12,6 @@ import {
 // const { width } = Dimensions.get("window");
 
 export default function CalendarScreen() {
-  const colorScheme = useColorScheme();
-  const colors = Colors[colorScheme ?? "light"];
   const [currentDate, setCurrentDate] = useState(new Date());
 
   const events = [
@@ -27,7 +23,7 @@ export default function CalendarScreen() {
       location: "Online",
       type: "workshop",
       attendees: 45,
-      color: colors.primary,
+      color: PlatformColor("systemBlue"),
     },
     {
       id: 2,
@@ -85,217 +81,306 @@ export default function CalendarScreen() {
   };
 
   return (
-    <View className="flex-1" style={{ backgroundColor: colors.background }}>
-      <ScrollView
-        className="flex-1"
-        showsVerticalScrollIndicator={false}
-        contentContainerClassName="pb-[100px]"
-      >
-        {/* Header */}
-        <LinearGradient
-          colors={[colors.primary, `${colors.primary}DD`]}
-          className="pt-16 pb-6 px-6 rounded-b-3xl"
-        >
-          <Animated.View entering={FadeInDown.delay(100)}>
-            <View className="flex-row items-center justify-between mb-4">
-              <PressableScale
-                onPress={() =>
-                  setCurrentDate(
-                    new Date(currentDate.setDate(currentDate.getDate() - 1))
-                  )
-                }
-              >
-                <MaterialCommunityIcons name="chevron-left" size={24} color="#FFFFFF" />
-              </PressableScale>
-              <View className="items-center">
-                <Text
-                  className="text-2xl font-bold"
-                  style={{ color: "#FFFFFF" }}
-                >
-                  {currentDate.toLocaleDateString("en-US", {
-                    month: "long",
-                    year: "numeric",
-                  })}
-                </Text>
-                <Text
-                  className="text-base opacity-90"
-                  style={{ color: "#FFFFFF" }}
-                >
-                  {currentDate.toLocaleDateString("en-US", {
-                    weekday: "long",
-                    day: "numeric",
-                  })}
-                </Text>
-              </View>
-              <PressableScale
-                onPress={() =>
-                  setCurrentDate(
-                    new Date(currentDate.setDate(currentDate.getDate() + 1))
-                  )
-                }
-              >
-                <MaterialCommunityIcons name="chevron-right" size={24} color="#FFFFFF" />
-              </PressableScale>
-            </View>
-          </Animated.View>
-        </LinearGradient>
+    <ScrollView
+      contentInsetAdjustmentBehavior="automatic"
+      showsVerticalScrollIndicator={false}
+      style={{ flex: 1, backgroundColor: PlatformColor("systemBackground") }}
+      contentContainerStyle={{ paddingBottom: 100, paddingHorizontal: 16, paddingTop: 16, gap: 24 }}
+    >
+      {/* Date Navigation */}
+      <Animated.View entering={FadeInDown.delay(100)}>
+        <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
+          <PressableScale
+            onPress={() =>
+              setCurrentDate(
+                new Date(currentDate.setDate(currentDate.getDate() - 1))
+              )
+            }
+          >
+            <SymbolView
+              name="chevron.left"
+              size={24}
+              tintColor={PlatformColor("label")}
+              type="hierarchical"
+            />
+          </PressableScale>
+          <View style={{ alignItems: "center" }}>
+            <Text
+              selectable
+              style={{
+                fontSize: 22,
+                fontWeight: "700",
+                color: PlatformColor("label"),
+              }}
+            >
+              {currentDate.toLocaleDateString("en-US", {
+                month: "long",
+                year: "numeric",
+              })}
+            </Text>
+            <Text
+              selectable
+              style={{
+                fontSize: 16,
+                color: PlatformColor("secondaryLabel"),
+                marginTop: 4,
+              }}
+            >
+              {currentDate.toLocaleDateString("en-US", {
+                weekday: "long",
+                day: "numeric",
+              })}
+            </Text>
+          </View>
+          <PressableScale
+            onPress={() =>
+              setCurrentDate(
+                new Date(currentDate.setDate(currentDate.getDate() + 1))
+              )
+            }
+          >
+            <SymbolView
+              name="chevron.right"
+              size={24}
+              tintColor={PlatformColor("label")}
+              type="hierarchical"
+            />
+          </PressableScale>
+        </View>
+      </Animated.View>
 
-        {/* Today's Events */}
-        {todayEvents.length > 0 && (
-          <View className="px-6 mt-6">
-            <Animated.View entering={FadeInRight.delay(200)}>
-              <Text
-                className="text-xl font-bold mb-4"
-                style={{ color: colors.text }}
+      {/* Today's Events */}
+      {todayEvents.length > 0 && (
+        <Animated.View entering={FadeInRight.delay(200)}>
+          <Text
+            style={{
+              fontSize: 20,
+              fontWeight: "700",
+              marginBottom: 16,
+              color: PlatformColor("label"),
+            }}
+          >
+            Today&apos;s Events
+          </Text>
+          {todayEvents.map((event, index) => (
+            <Animated.View
+              key={event.id}
+              entering={FadeInDown.delay(300 + index * 100)}
+            >
+              <PressableScale
+                style={{
+                  marginBottom: 16,
+                  borderRadius: 16,
+                  padding: 16,
+                  backgroundColor: PlatformColor("secondarySystemBackground"),
+                  borderLeftWidth: 4,
+                  borderLeftColor: event.color,
+                  borderCurve: "continuous",
+                  boxShadow: "0 1px 3px rgba(0, 0, 0, 0.1)",
+                }}
               >
-                Today&apos;s Events
-              </Text>
-              {todayEvents.map((event, index) => (
-                <Animated.View
-                  key={event.id}
-                  entering={FadeInDown.delay(300 + index * 100)}
-                >
-                  <PressableScale
-                    className="mb-4 rounded-2xl p-4"
+                <View style={{ flexDirection: "row", alignItems: "flex-start" }}>
+                  <View
                     style={{
-                      backgroundColor: colors.background,
-                      borderLeftWidth: 4,
-                      borderLeftColor: event.color,
-                      shadowColor: "#000",
-                      shadowOffset: { width: 0, height: 2 },
-                      shadowOpacity: 0.1,
-                      shadowRadius: 8,
-                      elevation: 3,
+                      width: 48,
+                      height: 48,
+                      borderRadius: 12,
+                      alignItems: "center",
+                      justifyContent: "center",
+                      marginRight: 16,
+                      backgroundColor: `${String(event.color)}20`,
+                      borderCurve: "continuous",
                     }}
                   >
-                    <View className="flex-row items-start">
-                      <View
-                        className="w-12 h-12 rounded-xl items-center justify-center mr-4"
-                        style={{ backgroundColor: `${event.color}20` }}
-                      >
-                        <Text className="text-2xl">{getEventIcon(event.type)}</Text>
-                      </View>
-                      <View className="flex-1">
-                        <Text
-                          className="text-lg font-bold mb-1"
-                          style={{ color: colors.text }}
-                        >
-                          {event.title}
-                        </Text>
-                        <View className="flex-row items-center mb-2">
-                          <MaterialCommunityIcons name="clock" size={14} color={colors.icon} />
-                          <Text
-                            className="text-sm ml-1"
-                            style={{ color: colors.icon }}
-                          >
-                            {event.time}
-                          </Text>
-                        </View>
-                        <View className="flex-row items-center mb-2">
-                          <MaterialCommunityIcons name="map-marker" size={14} color={colors.icon} />
-                          <Text
-                            className="text-sm ml-1"
-                            style={{ color: colors.icon }}
-                          >
-                            {event.location}
-                          </Text>
-                        </View>
-                        <View className="flex-row items-center">
-                          <MaterialCommunityIcons name="account-group" size={14} color={colors.icon} />
-                          <Text
-                            className="text-sm ml-1"
-                            style={{ color: colors.icon }}
-                          >
-                            {event.attendees} attendees
-                          </Text>
-                        </View>
-                      </View>
-                    </View>
-                  </PressableScale>
-                </Animated.View>
-              ))}
-            </Animated.View>
-          </View>
-        )}
-
-        {/* Upcoming Events */}
-        <View className="px-6 mt-6">
-          <Animated.View entering={FadeInRight.delay(400)}>
-            <Text
-              className="text-xl font-bold mb-4"
-              style={{ color: colors.text }}
-            >
-              Upcoming Events
-            </Text>
-            {upcomingEvents.map((event, index) => (
-              <Animated.View
-                key={event.id}
-                entering={FadeInDown.delay(500 + index * 100)}
-              >
-                <PressableScale
-                  className="mb-4 rounded-2xl p-4"
-                  style={{
-                    backgroundColor: colors.background,
-                    borderLeftWidth: 4,
-                    borderLeftColor: event.color,
-                    shadowColor: "#000",
-                    shadowOffset: { width: 0, height: 2 },
-                    shadowOpacity: 0.1,
-                    shadowRadius: 8,
-                    elevation: 3,
-                  }}
-                >
-                  <View className="flex-row items-start">
-                    <View
-                      className="w-12 h-12 rounded-xl items-center justify-center mr-4"
-                      style={{ backgroundColor: `${event.color}20` }}
+                    <Text style={{ fontSize: 24 }}>{getEventIcon(event.type)}</Text>
+                  </View>
+                  <View style={{ flex: 1 }}>
+                    <Text
+                      selectable
+                      style={{
+                        fontSize: 18,
+                        fontWeight: "700",
+                        marginBottom: 4,
+                        color: PlatformColor("label"),
+                      }}
                     >
-                      <Text className="text-2xl">{getEventIcon(event.type)}</Text>
+                      {event.title}
+                    </Text>
+                    <View style={{ flexDirection: "row", alignItems: "center", marginBottom: 8 }}>
+                      <SymbolView
+                        name="clock.fill"
+                        size={14}
+                        tintColor={PlatformColor("secondaryLabel")}
+                        type="hierarchical"
+                      />
+                      <Text
+                        selectable
+                        style={{
+                          fontSize: 14,
+                          marginLeft: 4,
+                          color: PlatformColor("secondaryLabel"),
+                        }}
+                      >
+                        {event.time}
+                      </Text>
                     </View>
-                    <View className="flex-1">
+                    <View style={{ flexDirection: "row", alignItems: "center", marginBottom: 8 }}>
+                      <SymbolView
+                        name="mappin.circle.fill"
+                        size={14}
+                        tintColor={PlatformColor("secondaryLabel")}
+                        type="hierarchical"
+                      />
                       <Text
-                        className="text-lg font-bold mb-1"
-                        style={{ color: colors.text }}
+                        selectable
+                        style={{
+                          fontSize: 14,
+                          marginLeft: 4,
+                          color: PlatformColor("secondaryLabel"),
+                        }}
                       >
-                        {event.title}
+                        {event.location}
                       </Text>
+                    </View>
+                    <View style={{ flexDirection: "row", alignItems: "center" }}>
+                      <SymbolView
+                        name="person.2.fill"
+                        size={14}
+                        tintColor={PlatformColor("secondaryLabel")}
+                        type="hierarchical"
+                      />
                       <Text
-                        className="text-sm mb-2"
-                        style={{ color: colors.icon }}
+                        selectable
+                        style={{
+                          fontSize: 14,
+                          marginLeft: 4,
+                          color: PlatformColor("secondaryLabel"),
+                          fontVariant: ["tabular-nums"],
+                        }}
                       >
-                        {new Date(event.date).toLocaleDateString("en-US", {
-                          weekday: "long",
-                          month: "short",
-                          day: "numeric",
-                        })}
+                        {event.attendees} attendees
                       </Text>
-                      <View className="flex-row items-center mb-2">
-                        <MaterialCommunityIcons name="clock" size={14} color={colors.icon} />
-                        <Text
-                          className="text-sm ml-1"
-                          style={{ color: colors.icon }}
-                        >
-                          {event.time}
-                        </Text>
-                      </View>
-                      <View className="flex-row items-center">
-                        <MaterialCommunityIcons name="map-marker" size={14} color={colors.icon} />
-                        <Text
-                          className="text-sm ml-1"
-                          color={colors.icon}
-                          style={{ color: colors.icon }}
-                        >
-                          {event.location}
-                        </Text>
-                      </View>
                     </View>
                   </View>
-                </PressableScale>
-              </Animated.View>
-            ))}
+                </View>
+              </PressableScale>
+            </Animated.View>
+          ))}
+        </Animated.View>
+      )}
+
+      {/* Upcoming Events */}
+      <Animated.View entering={FadeInRight.delay(400)}>
+        <Text
+          style={{
+            fontSize: 20,
+            fontWeight: "700",
+            marginBottom: 16,
+            color: PlatformColor("label"),
+          }}
+        >
+          Upcoming Events
+        </Text>
+        {upcomingEvents.map((event, index) => (
+          <Animated.View
+            key={event.id}
+            entering={FadeInDown.delay(500 + index * 100)}
+          >
+            <PressableScale
+              style={{
+                marginBottom: 16,
+                borderRadius: 16,
+                padding: 16,
+                backgroundColor: PlatformColor("secondarySystemBackground"),
+                borderLeftWidth: 4,
+                borderLeftColor: event.color,
+                borderCurve: "continuous",
+                boxShadow: "0 1px 3px rgba(0, 0, 0, 0.1)",
+              }}
+            >
+              <View style={{ flexDirection: "row", alignItems: "flex-start" }}>
+                <View
+                  style={{
+                    width: 48,
+                    height: 48,
+                    borderRadius: 12,
+                    alignItems: "center",
+                    justifyContent: "center",
+                    marginRight: 16,
+                    backgroundColor: `${String(event.color)}20`,
+                    borderCurve: "continuous",
+                  }}
+                >
+                  <Text style={{ fontSize: 24 }}>{getEventIcon(event.type)}</Text>
+                </View>
+                <View style={{ flex: 1 }}>
+                  <Text
+                    selectable
+                    style={{
+                      fontSize: 18,
+                      fontWeight: "700",
+                      marginBottom: 4,
+                      color: PlatformColor("label"),
+                    }}
+                  >
+                    {event.title}
+                  </Text>
+                  <Text
+                    selectable
+                    style={{
+                      fontSize: 14,
+                      marginBottom: 8,
+                      color: PlatformColor("secondaryLabel"),
+                    }}
+                  >
+                    {new Date(event.date).toLocaleDateString("en-US", {
+                      weekday: "long",
+                      month: "short",
+                      day: "numeric",
+                    })}
+                  </Text>
+                  <View style={{ flexDirection: "row", alignItems: "center", marginBottom: 8 }}>
+                    <SymbolView
+                      name="clock.fill"
+                      size={14}
+                      tintColor={PlatformColor("secondaryLabel")}
+                      type="hierarchical"
+                    />
+                    <Text
+                      selectable
+                      style={{
+                        fontSize: 14,
+                        marginLeft: 4,
+                        color: PlatformColor("secondaryLabel"),
+                      }}
+                    >
+                      {event.time}
+                    </Text>
+                  </View>
+                  <View style={{ flexDirection: "row", alignItems: "center" }}>
+                    <SymbolView
+                      name="mappin.circle.fill"
+                      size={14}
+                      tintColor={PlatformColor("secondaryLabel")}
+                      type="hierarchical"
+                    />
+                    <Text
+                      selectable
+                      style={{
+                        fontSize: 14,
+                        marginLeft: 4,
+                        color: PlatformColor("secondaryLabel"),
+                      }}
+                    >
+                      {event.location}
+                    </Text>
+                  </View>
+                </View>
+              </View>
+            </PressableScale>
           </Animated.View>
-        </View>
-      </ScrollView>
-    </View>
+        ))}
+      </Animated.View>
+    </ScrollView>
   );
 }

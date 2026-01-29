@@ -7,6 +7,7 @@ import { Link as RouterLink } from "expo-router";
 import { PressableScale as PresstoPressableScale } from "pressto";
 import React from "react";
 import {
+  Platform,
   KeyboardAvoidingView as RNKeyboardAvoidingView,
   Pressable as RNPressable,
   ScrollView as RNScrollView,
@@ -86,7 +87,7 @@ export const TextInput = (
 };
 TextInput.displayName = "CSS(TextInput)";
 
-// AnimatedScrollView
+// AnimatedScrollView with native iOS defaults
 export const AnimatedScrollView = (
   props: React.ComponentProps<typeof Animated.ScrollView> & {
     className?: string;
@@ -94,7 +95,12 @@ export const AnimatedScrollView = (
     contentContainerClassName?: string;
   }
 ) => {
-  return useCssElement(Animated.ScrollView, props, {
+  // Apply native iOS defaults if not explicitly set
+  const propsWithDefaults = Platform.OS === "ios" && props.contentInsetAdjustmentBehavior === undefined
+    ? Object.assign({}, props, { contentInsetAdjustmentBehavior: "automatic" as const })
+    : props;
+
+  return useCssElement(Animated.ScrollView, propsWithDefaults as any, {
     className: "style",
     contentClassName: "contentContainerStyle",
     contentContainerClassName: "contentContainerStyle",
@@ -105,7 +111,8 @@ export const AnimatedScrollView = (
 function XXTouchableHighlight(
   props: React.ComponentProps<typeof RNTouchableHighlight>
 ) {
-  const { underlayColor, ...style } = StyleSheet.flatten(props.style) || {};
+  const flattenedStyle = StyleSheet.flatten(props.style) || {};
+  const { underlayColor, ...style } = flattenedStyle as any;
   return (
     <RNTouchableHighlight
       underlayColor={underlayColor}
@@ -170,5 +177,4 @@ KeyboardAvoidingView.displayName = "CSS(KeyboardAvoidingView)";
 
 // Export pressable configuration and utilities
 export { pressableConfig, triggerHaptic, type HapticType } from "./pressable-config";
-export type { PressableScaleProps };
 
