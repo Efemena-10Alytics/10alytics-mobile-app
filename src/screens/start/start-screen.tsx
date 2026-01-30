@@ -1,9 +1,11 @@
 import { Colors } from "@/constants/theme";
 import { useColorScheme } from "@/hooks/use-color-scheme";
+import { useAuthStore } from "@/utils/auth-store";
 import { router } from "expo-router";
 import LottieView from "lottie-react-native";
+import { PressableScale } from "pressto";
 import React, { useRef } from "react";
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const BUTTON_RADIUS = 14;
@@ -55,10 +57,21 @@ export function StartScreen() {
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme ?? "light"];
   const lottieRef = useRef<LottieView>(null);
+  const {
+    isLoggedIn,
+    hasCompletedOnboarding
+  } = useAuthStore();
+
 
   React.useEffect(() => {
     lottieRef.current?.play();
   }, []);
+
+  React.useEffect(() => {
+    if (hasCompletedOnboarding && isLoggedIn) {
+      router.replace("/(tabs)");
+    }
+  }, [hasCompletedOnboarding, isLoggedIn]);
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]} edges={["top", "bottom"]}>
@@ -71,19 +84,25 @@ export function StartScreen() {
           autoPlay
         />
       </View>
-      <Text style={[styles.title, { color: colors.text }]}>Welcome to 10alytics</Text>
+      <Text style={[styles.title, { color: colors.text }]}>Welcome to 10Alytics</Text>
       <Text style={[styles.subtitle, { color: colors.text }]}>
-        Your analytics companion. Get started in seconds.
+        {hasCompletedOnboarding ? "Your analytics companion. Get started in seconds." : "Complete your onboarding to get started."}
       </Text>
-      <Pressable
-        style={({ pressed }) => [
-          styles.button,
-          { backgroundColor: colors.primary, opacity: pressed ? 0.9 : 1 },
-        ]}
-        onPress={() => router.replace("/onboarding")}
-      >
-        <Text style={styles.buttonText}>Get Started</Text>
-      </Pressable>
+      {hasCompletedOnboarding && !isLoggedIn ? (
+        <PressableScale
+          style={[styles.button, { backgroundColor: colors.primary }]}
+          onPress={() => router.replace("/sign-in")}
+        >
+          <Text style={styles.buttonText}>Get Started</Text>
+        </PressableScale>
+      ) : (
+        <PressableScale
+          style={[styles.button, { backgroundColor: colors.primary }]}
+          onPress={() => router.replace("/onboarding")}
+        >
+          <Text style={styles.buttonText}>Complete Onboarding</Text>
+        </PressableScale>
+      )}
     </SafeAreaView>
   );
 }

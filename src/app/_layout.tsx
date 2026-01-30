@@ -52,6 +52,8 @@ export default function RootLayout() {
     return null;
   }
   console.log("isLoggedIn", isLoggedIn);
+  console.log("hasCompletedOnboarding", hasCompletedOnboarding);
+  console.log("shouldCreateAccount", shouldCreateAccount);
 
 
   return (

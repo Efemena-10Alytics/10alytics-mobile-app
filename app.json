@@ -1,16 +1,16 @@
 {
   "expo": {
-    "name": "10alytics-app",
-    "slug": "10alyticsapp",
+    "name": "10alytics",
+    "slug": "tenalyticsapp",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./src/assets/images/icon.png",
-    "scheme": "10alyticsapp",
+    "scheme": "tenalyticsapp",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.davidghena.x10alyticsapp"
+      "bundleIdentifier": "com.davidghena.tenalyticsapp"
     },
     "android": {
       "adaptiveIcon": {
@@ -21,7 +21,7 @@
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
-      "package": "com.davidghena.x10alyticsapp"
+      "package": "com.davidghena.tenalyticsapp"
     },
     "web": {
       "output": "static",
@@ -32,11 +32,12 @@
       [
         "expo-splash-screen",
         {
-          "image": "./src/assets/images/splash-icon.png",
+          "image": "./src/assets/images/splash-icon-light.png",
           "imageWidth": 200,
           "resizeMode": "contain",
           "backgroundColor": "#ffffff",
           "dark": {
+            "image": "./src/assets/images/splash-icon-dark.png",
             "backgroundColor": "#000000"
           }
         }
