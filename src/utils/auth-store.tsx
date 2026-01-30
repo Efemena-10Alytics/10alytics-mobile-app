@@ -1,8 +1,8 @@
-import { create } from "zustand";
-import { persist, createJSONStorage } from "zustand/middleware";
+import { apiClient } from "@/lib/api-client";
 import * as SecureStore from "expo-secure-store";
 import { Platform } from "react-native";
-import { apiClient } from "@/lib/api-client";
+import { create } from "zustand";
+import { createJSONStorage, persist } from "zustand/middleware";
 
 const isWeb = Platform.OS === "web";
 
@@ -14,17 +14,18 @@ type UserState = {
   _hasHydrated: boolean;
   user: {
     id: string;
-    name: string;
+    first_name: string;
+    last_name: string;
     email: string;
     image?: string;
   } | null;
-  logIn: (user?: { id: string; name: string; email: string; image?: string }) => void;
+  logIn: (user?: { id: string; first_name: string; last_name: string; email: string; image?: string }) => void;
   logOut: () => Promise<void>;
   completeOnboarding: () => void;
   resetOnboarding: () => void;
   logInAsVip: () => void;
   setHasHydrated: (value: boolean) => void;
-  setUser: (user: { id: string; name: string; email: string; image?: string } | null) => void;
+  setUser: (user: { id: string; first_name: string; last_name: string; email: string; image?: string } | null) => void;
   checkAuth: () => Promise<void>;
 };
 
@@ -130,11 +131,11 @@ export const useAuthStore = create(
       storage: isWeb
         ? createJSONStorage(() => localStorage)
         : createJSONStorage(() => ({
-            setItem: (key: string, value: string) =>
-              SecureStore.setItemAsync(key, value),
-            getItem: (key: string) => SecureStore.getItemAsync(key),
-            removeItem: (key: string) => SecureStore.deleteItemAsync(key),
-          })),
+          setItem: (key: string, value: string) =>
+            SecureStore.setItemAsync(key, value),
+          getItem: (key: string) => SecureStore.getItemAsync(key),
+          removeItem: (key: string) => SecureStore.deleteItemAsync(key),
+        })),
       onRehydrateStorage: () => {
         return (state) => {
           state?.setHasHydrated(true);

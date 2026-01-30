@@ -1,7 +1,7 @@
-import * as SecureStore from "expo-secure-store";
-import { Platform } from "react-native";
-import * as WebBrowser from "expo-web-browser";
 import * as Linking from "expo-linking";
+import * as SecureStore from "expo-secure-store";
+import * as WebBrowser from "expo-web-browser";
+import { Platform } from "react-native";
 
 const API_BASE_URL =
   process.env.EXPO_PUBLIC_API_URL || "http://localhost:8000/api";
@@ -12,7 +12,8 @@ WebBrowser.maybeCompleteAuthSession();
 interface LoginResponse {
   user: {
     id: string;
-    name: string;
+    first_name: string;
+    last_name: string;
     email: string;
     image?: string;
   };
@@ -96,6 +97,8 @@ class ApiClient {
 
       const responseData = await response.json();
 
+      console.log("responseData", responseData);
+
       if (!response.ok) {
         return {
           error: {
@@ -130,39 +133,40 @@ class ApiClient {
     data?: LoginResponse;
     error?: ApiError;
   }> {
-    return this.request<LoginResponse>("/login", {
+    return this.request<LoginResponse>("/api/v2/login", {
       method: "POST",
       body: JSON.stringify({ email, password }),
     });
   }
 
   async register(
-    name: string,
+    first_name: string,
+    last_name: string,
     email: string,
     password: string
   ): Promise<{
     data?: LoginResponse;
     error?: ApiError;
   }> {
-    return this.request<LoginResponse>("/register", {
+    return this.request<LoginResponse>("/api/v2/register", {
       method: "POST",
-      body: JSON.stringify({ name, email, password }),
+      body: JSON.stringify({ first_name, last_name, email, password }),
     });
   }
 
   async logout(): Promise<{ data?: { message: string }; error?: ApiError }> {
-    const result = await this.request("/logout", {
+    const result = await this.request("/api/v2/logout", {
       method: "POST",
     });
     await this.removeToken();
-    return result;
+    return { data: { message: "Logged out successfully" } };
   }
 
   async getCurrentUser(): Promise<{
     data?: LoginResponse["user"];
     error?: ApiError;
   }> {
-    return this.request<LoginResponse["user"]>("/user", {
+    return this.request<LoginResponse["user"]>("/api/v2/user", {
       method: "GET",
     });
   }
@@ -180,6 +184,7 @@ class ApiClient {
 
       const result = await WebBrowser.openAuthSessionAsync(authUrl, redirectUrl);
 
+
       if (result.type === "success" && result.url) {
         try {
           const url = new URL(result.url);
@@ -196,6 +201,8 @@ class ApiClient {
 
           if (token) {
             await this.setToken(token);
+
+            console.log("token", token);
             // Fetch user data after setting token
             const userResult = await this.getCurrentUser();
             if (userResult.data) {
@@ -204,6 +211,7 @@ class ApiClient {
           }
         } catch (urlError) {
           // Handle case where URL might not be parseable
+          console.log("urlError", urlError);
           return {
             error: {
               message: "Failed to process authentication response",

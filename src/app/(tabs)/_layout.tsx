@@ -16,6 +16,10 @@ export default function TabLayout() {
         <Icon sf="calendar" />
         <Label>Classes</Label>
       </NativeTabs.Trigger>
+      <NativeTabs.Trigger name="chat">
+        <Icon sf="message" />
+        <Label>Chat</Label>
+      </NativeTabs.Trigger>
       <NativeTabs.Trigger name="profile">
         <Icon sf="person.circle" />
         <Label>Profile</Label>
