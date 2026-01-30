@@ -100,7 +100,9 @@ export function StartScreen() {
           style={[styles.button, { backgroundColor: colors.primary }]}
           onPress={() => router.replace("/onboarding")}
         >
-          <Text style={styles.buttonText}>Complete Onboarding</Text>
+          <Text style={styles.buttonText}>
+            Get Started
+          </Text>
         </PressableScale>
       )}
     </SafeAreaView>
