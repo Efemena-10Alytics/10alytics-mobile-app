@@ -1,3 +1,3 @@
-import { OnboardingFirstScreen } from "@/screens/onboarding/onboarding-first-screen";
+import OnboardingScreen from "@/screens/onboarding/onboarding-first-screen";
 
-export default OnboardingFirstScreen;
+export default OnboardingScreen;

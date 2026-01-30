@@ -1,10 +1,18 @@
+import React from "react";
+import {
+  ScrollView as RNScrollView,
+  Text as RNText,
+  View as RNView,
+} from "react-native";
 import RNAnimated from "react-native-reanimated";
-import * as TW from "./index";
+import { PressableScale } from "./index";
 
 export const Animated = {
   ...RNAnimated,
-  View: RNAnimated.createAnimatedComponent(TW.View),
-  ScrollView: RNAnimated.createAnimatedComponent(TW.ScrollView),
-  Text: RNAnimated.createAnimatedComponent(TW.Text),
-  PressableScale: RNAnimated.createAnimatedComponent(TW.PressableScale),
+  View: RNAnimated.createAnimatedComponent(RNView),
+  ScrollView: RNAnimated.createAnimatedComponent(RNScrollView),
+  Text: RNAnimated.createAnimatedComponent(RNText),
+  PressableScale: RNAnimated.createAnimatedComponent(
+    PressableScale as React.ComponentType<any>
+  ),
 };

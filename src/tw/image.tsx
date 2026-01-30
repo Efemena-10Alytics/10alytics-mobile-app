@@ -1,36 +1,38 @@
 import { Image as RNImage } from "expo-image";
 import React from "react";
 import { StyleSheet } from "react-native";
-import { useCssElement } from "react-native-css";
 import Animated from "react-native-reanimated";
 
 const AnimatedExpoImage = Animated.createAnimatedComponent(RNImage);
 
-export type ImageProps = React.ComponentProps<typeof Image>;
+type ImageStyle = React.ComponentProps<typeof RNImage>["style"] & {
+  objectFit?: "contain" | "cover" | "fill" | "none";
+  objectPosition?: string;
+};
 
-function CSSImage(props: React.ComponentProps<typeof AnimatedExpoImage>) {
-  // @ts-expect-error: Remap objectFit style to contentFit property
-  const { objectFit, objectPosition, ...style } =
-    StyleSheet.flatten(props.style) || {};
+export type ImageProps = Omit<
+  React.ComponentProps<typeof AnimatedExpoImage>,
+  "style"
+> & {
+  style?: ImageStyle;
+  className?: string;
+};
+
+export const Image = (props: ImageProps) => {
+  const { className: _cn, style, ...rest } = props;
+  const flattened = StyleSheet.flatten(style) || {};
+  const { objectFit, objectPosition, ...styleRest } = flattened as ImageStyle;
 
   return (
     <AnimatedExpoImage
       contentFit={objectFit}
       contentPosition={objectPosition}
-      {...props}
+      {...rest}
       source={
-        typeof props.source === "string" ? { uri: props.source } : props.source
+        typeof rest.source === "string" ? { uri: rest.source } : rest.source
       }
-      // @ts-expect-error: Style is remapped above
-      style={style}
+      style={styleRest}
     />
   );
-}
-
-export const Image = (
-  props: React.ComponentProps<typeof CSSImage> & { className?: string }
-) => {
-  return useCssElement(CSSImage, props, { className: "style" });
 };
-
-Image.displayName = "CSS(Image)";
+Image.displayName = "Image";

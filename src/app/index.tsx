@@ -1,3 +1,5 @@
-import { IndexScreen } from "@/screens/index-screen";
+import { Redirect } from "expo-router";
 
-export default IndexScreen;
+export default function App() {
+    return <Redirect href="/onboarding" />;
+}

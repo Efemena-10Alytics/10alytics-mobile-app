@@ -1,22 +1,70 @@
 import { Colors } from "@/constants/theme";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { apiClient } from "@/lib/api-client";
-import { KeyboardAvoidingView, PressableScale, ScrollView, Text, TextInput, View } from "@/tw";
-import { Animated } from "@/tw/animated";
+import { KeyboardAvoidingView, Pressable, ScrollView, Text, TextInput, View } from "@/tw";
 import { useAuthStore } from "@/utils/auth-store";
-import AntDesign from '@expo/vector-icons/AntDesign';
-import { LinearGradient } from "expo-linear-gradient";
+import AntDesign from "@expo/vector-icons/AntDesign";
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { router } from "expo-router";
 import React, { useState } from "react";
-import {
-  Alert,
-  Platform,
-} from "react-native";
-import {
-  FadeInDown,
-  FadeInRight,
-} from "react-native-reanimated";
+import { Alert, Linking, Platform, StyleSheet } from "react-native";
 
+const INPUT_RADIUS = 12;
+const BUTTON_RADIUS = 14;
+const SPACING = 24;
+const TERMS_URL = "https://10alytics.com/terms"; // Replace with your actual terms URL
+
+const styles = StyleSheet.create({
+  container: { flex: 1 },
+  content: { flex: 1, paddingHorizontal: SPACING, paddingTop: 4 },
+  scrollContent: { paddingBottom: SPACING * 1.5 },
+  welcomeWrap: { marginBottom: 28 },
+  welcomeTitle: { fontSize: 28, fontWeight: "700", letterSpacing: -0.6 },
+  welcomeSubtitle: { fontSize: 15, marginTop: 8, lineHeight: 22, opacity: 0.9 },
+  fieldWrap: { marginBottom: 20 },
+  fieldLabel: { fontSize: 14, fontWeight: "600", marginBottom: 8 },
+  inputRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    borderRadius: INPUT_RADIUS,
+    paddingHorizontal: 16,
+    minHeight: 52,
+  },
+  input: { flex: 1, paddingVertical: 14, fontSize: 16 },
+  eyeButton: { padding: 8 },
+  footer: { paddingHorizontal: SPACING, paddingTop: 24, paddingBottom: 40 },
+  primaryButton: {
+    paddingVertical: 16,
+    borderRadius: BUTTON_RADIUS,
+    alignItems: "center",
+    justifyContent: "center",
+    flexDirection: "row",
+  },
+  primaryButtonText: { fontSize: 16, fontWeight: "700", color: "#fff" },
+  googleIconWrap: { marginRight: 12 },
+  dividerRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginVertical: 28,
+  },
+  dividerLine: { flex: 1, height: 1, opacity: 0.35 },
+  dividerText: { marginHorizontal: 14, fontSize: 13, fontWeight: "600" },
+  secondaryButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: 16,
+    borderRadius: BUTTON_RADIUS,
+    borderWidth: 2,
+  },
+  secondaryButtonText: { fontSize: 16, fontWeight: "600" },
+  termsWrap: { marginTop: 22, paddingHorizontal: 8 },
+  termsText: { fontSize: 13, textAlign: "center", lineHeight: 20 },
+  termsLink: { fontWeight: "600" },
+  footerRow: { flexDirection: "row", justifyContent: "center", marginTop: 28 },
+  footerHint: { fontSize: 14 },
+  footerLink: { fontSize: 14, fontWeight: "600" },
+});
 
 export function SignInScreen() {
   const colorScheme = useColorScheme();
@@ -82,194 +130,174 @@ export function SignInScreen() {
 
   return (
     <KeyboardAvoidingView
-      className="flex-1"
+      style={[styles.container, { backgroundColor: colors.background }]}
       behavior={Platform.OS === "ios" ? "padding" : "height"}
-      style={{ backgroundColor: colors.background }}
     >
       <ScrollView
-        className="flex-1"
-        contentContainerClassName="flex-grow"
+        style={styles.content}
+        contentContainerStyle={styles.scrollContent}
+        contentInsetAdjustmentBehavior="automatic"
         showsVerticalScrollIndicator={false}
+        keyboardShouldPersistTaps="handled"
       >
-        {/* Header */}
-        <LinearGradient
-          colors={[colors.primary, `${colors.primary}DD`]}
-          className="pt-20 pb-12 px-6 rounded-b-3xl"
-        >
-          <Animated.View entering={FadeInDown.delay(100)}>
-            <Text
-              className="text-4xl font-bold mb-2 text-center"
-              style={{ color: "#FFFFFF" }}
-            >
-              Welcome Back!
-            </Text>
-            <Text
-              className="text-base opacity-90 text-center"
-              style={{ color: "#FFFFFF" }}
-            >
-              Sign in to continue your learning journey
-            </Text>
-          </Animated.View>
-        </LinearGradient>
+        <View style={styles.welcomeWrap}>
+          <Text style={[styles.welcomeTitle, { color: colors.text }]}>
+            Welcome back!
+          </Text>
+          <Text style={[styles.welcomeSubtitle, { color: colors.text }]}>
+            Choose how you&apos;d like to sign in
+          </Text>
+        </View>
 
-        <View className="flex-1 px-6 mt-8">
-          {/* Email Input */}
-          <Animated.View entering={FadeInRight.delay(200)}>
-            <View className="mb-4">
-              <Text
-                className="text-sm font-semibold mb-2"
-                style={{ color: colors.text }}
-              >
-                Email
-              </Text>
-              <View
-                className="flex-row items-center rounded-2xl px-4"
-                style={{
-                  backgroundColor: `${colors.primary}10`,
-                  borderWidth: 1,
-                  borderColor: `${colors.primary}30`,
-                }}
-              >
-                <AntDesign name="mail" size={20} color={colors.icon} style={{ marginRight: 12 }} />
-                <TextInput
-                  className="flex-1 py-4 text-base"
-                  style={{ color: colors.text }}
-                  placeholder="Enter your email"
-                  placeholderTextColor={colors.icon}
-                  value={email}
-                  onChangeText={setEmail}
-                  keyboardType="email-address"
-                  autoCapitalize="none"
-                  autoComplete="email"
-                />
-              </View>
-            </View>
-          </Animated.View>
-
-          {/* Password Input */}
-          <Animated.View entering={FadeInRight.delay(300)}>
-            <View className="mb-6">
-              <Text
-                className="text-sm font-semibold mb-2"
-                style={{ color: colors.text }}
-              >
-                Password
-              </Text>
-              <View
-                className="flex-row items-center rounded-2xl px-4"
-                style={{
-                  backgroundColor: `${colors.primary}10`,
-                  borderWidth: 1,
-                  borderColor: `${colors.primary}30`,
-                }}
-              >
-                <AntDesign name="lock" size={20} color={colors.icon} style={{ marginRight: 12 }} />
-                <TextInput
-                  className="flex-1 py-4 text-base"
-                  style={{ color: colors.text }}
-                  placeholder="Enter your password"
-                  placeholderTextColor={colors.icon}
-                  value={password}
-                  onChangeText={setPassword}
-                  secureTextEntry={!showPassword}
-                  autoCapitalize="none"
-                  autoComplete="password"
-                />
-                <PressableScale
-                  onPress={() => setShowPassword(!showPassword)}
-                  className="p-2"
-                >
-                  {showPassword ? (
-                    <AntDesign name="eye-invisible" size={20} color={colors.icon} />
-                  ) : (
-                    <AntDesign name="eye" size={20} color={colors.icon} />
-                  )}
-                </PressableScale>
-              </View>
-            </View>
-          </Animated.View>
-
-          {/* Sign In Button */}
-          <Animated.View entering={FadeInDown.delay(400)}>
-            <PressableScale
-              onPress={handleEmailSignIn}
-              disabled={loading}
-              className="py-4 rounded-2xl items-center mb-4"
-              style={{
-                backgroundColor: colors.primary,
-                opacity: loading ? 0.6 : 1,
-              }}
-            >
-              <Text className="text-base font-bold text-white">
-                {loading ? "Signing in..." : "Sign In"}
-              </Text>
-            </PressableScale>
-          </Animated.View>
-
-          {/* Divider */}
-          <Animated.View
-            entering={FadeInDown.delay(500)}
-            className="flex-row items-center my-6"
+        <View style={{ opacity: loading ? 0.6 : 1 }} pointerEvents={loading ? "none" : "auto"}>
+          <Pressable
+            onPress={handleGoogleSignIn}
+            style={({ pressed }) => [
+              styles.primaryButton,
+              { backgroundColor: colors.primary },
+              pressed && !loading && { opacity: 0.88 },
+            ]}
           >
-            <View
-              className="flex-1 h-px"
-              style={{ backgroundColor: colors.icon }}
-            />
-            <Text
-              className="mx-4 text-sm"
-              style={{ color: colors.icon }}
-            >
-              OR
-            </Text>
-            <View
-              className="flex-1 h-px"
-              style={{ backgroundColor: colors.icon }}
-            />
-          </Animated.View>
+            {loading ? (
+              <Text style={styles.primaryButtonText}>Signing in...</Text>
+            ) : (
+              <>
+                <View style={styles.googleIconWrap}>
+                  <MaterialCommunityIcons
+                    name="google"
+                    size={22}
+                    color="#fff"
+                  />
+                </View>
+                <Text style={styles.primaryButtonText}>Continue with Google</Text>
+              </>
+            )}
+          </Pressable>
+        </View>
 
-          {/* Google Sign In Button */}
-          <Animated.View entering={FadeInDown.delay(600)}>
-            <PressableScale
-              onPress={handleGoogleSignIn}
-              disabled={loading}
-              className="flex-row items-center justify-center py-4 rounded-2xl border-2"
-              style={{
-                borderColor: colors.primary,
-                opacity: loading ? 0.6 : 1,
-              }}
-            >
-              <Text className="text-2xl mr-3">🔍</Text>
-              <Text
-                className="text-base font-semibold"
-                style={{ color: colors.primary }}
-              >
-                Continue with Google
-              </Text>
-            </PressableScale>
-          </Animated.View>
+        <View style={styles.dividerRow}>
+          <View style={[styles.dividerLine, { backgroundColor: colors.icon }]} />
+          <Text style={[styles.dividerText, { color: colors.icon }]}>OR</Text>
+          <View style={[styles.dividerLine, { backgroundColor: colors.icon }]} />
+        </View>
 
-          {/* Sign Up Link */}
-          <Animated.View
-            entering={FadeInDown.delay(700)}
-            className="flex-row justify-center mt-6"
+        <View style={styles.fieldWrap}>
+          <Text style={[styles.fieldLabel, { color: colors.text }]}>Email</Text>
+          <View
+            style={[
+              styles.inputRow,
+              {
+                backgroundColor: `${colors.primary}10`,
+                borderWidth: 1,
+                borderColor: `${colors.primary}30`,
+              },
+            ]}
           >
-            <Text
-              className="text-sm"
-              style={{ color: colors.icon }}
+            <AntDesign
+              name="mail"
+              size={20}
+              color={colors.icon}
+              style={{ marginRight: 12 }}
+            />
+            <TextInput
+              style={[styles.input, { color: colors.text }]}
+              placeholder="Enter your email"
+              placeholderTextColor={colors.icon}
+              value={email}
+              onChangeText={setEmail}
+              keyboardType="email-address"
+              autoCapitalize="none"
+              autoComplete="email"
+            />
+          </View>
+        </View>
+
+        <View style={styles.fieldWrap}>
+          <Text style={[styles.fieldLabel, { color: colors.text }]}>
+            Password
+          </Text>
+          <View
+            style={[
+              styles.inputRow,
+              {
+                backgroundColor: `${colors.primary}10`,
+                borderWidth: 1,
+                borderColor: `${colors.primary}30`,
+              },
+            ]}
+          >
+            <AntDesign
+              name="lock"
+              size={20}
+              color={colors.icon}
+              style={{ marginRight: 12 }}
+            />
+            <TextInput
+              style={[styles.input, { color: colors.text }]}
+              placeholder="Enter your password"
+              placeholderTextColor={colors.icon}
+              value={password}
+              onChangeText={setPassword}
+              secureTextEntry={!showPassword}
+              autoCapitalize="none"
+              autoComplete="password"
+            />
+            <Pressable
+              onPress={() => setShowPassword(!showPassword)}
+              style={({ pressed }) => [styles.eyeButton, pressed && { opacity: 0.7 }]}
             >
-              Don&apos;t have an account?{" "}
-            </Text>
-            <PressableScale onPress={() => router.push("/create-account")}>
-              <Text
-                className="text-sm font-semibold"
-                style={{ color: colors.primary }}
-              >
-                Sign Up
-              </Text>
-            </PressableScale>
-          </Animated.View>
+              {showPassword ? (
+                <AntDesign name="eye-invisible" size={20} color={colors.icon} />
+              ) : (
+                <AntDesign name="eye" size={20} color={colors.icon} />
+              )}
+            </Pressable>
+          </View>
         </View>
       </ScrollView>
+
+      <View style={[styles.footer, { backgroundColor: colors.background }]}>
+        <View style={{ opacity: loading ? 0.6 : 1 }} pointerEvents={loading ? "none" : "auto"}>
+          <Pressable
+            onPress={handleEmailSignIn}
+            style={({ pressed }) => [
+              styles.secondaryButton,
+              { borderColor: colors.primary },
+              pressed && !loading && { opacity: 0.88 },
+            ]}
+          >
+            <Text style={[styles.secondaryButtonText, { color: colors.primary }]}>
+              {loading ? "Signing in..." : "Sign In with Email"}
+            </Text>
+          </Pressable>
+        </View>
+
+        <View style={styles.termsWrap}>
+          <Text style={[styles.termsText, { color: colors.icon }]}>
+            By continuing you agree to our{" "}
+            <Text
+              style={[styles.termsLink, { color: colors.primary }]}
+              onPress={() => Linking.openURL(TERMS_URL)}
+            >
+              Terms of Service
+            </Text>
+          </Text>
+        </View>
+
+        <View style={styles.footerRow}>
+          <Text style={[styles.footerHint, { color: colors.icon }]}>
+            Don&apos;t have an account?{" "}
+          </Text>
+          <Pressable
+            onPress={() => router.push("/create-account")}
+            style={({ pressed }) => pressed && { opacity: 0.7 }}
+          >
+            <Text style={[styles.footerLink, { color: colors.primary }]}>
+              Sign Up
+            </Text>
+          </Pressable>
+        </View>
+      </View>
     </KeyboardAvoidingView>
   );
 }

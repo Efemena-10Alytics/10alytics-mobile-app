@@ -6,7 +6,19 @@ import { StatusBar } from 'expo-status-bar';
 import React, { useEffect } from "react";
 import { Platform } from "react-native";
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import '../../global.css';
+
+const signInScreenOptions = {
+  headerShown: true,
+  title: "Sign In",
+  contentStyle: { backgroundColor: "transparent" },
+  ...(Platform.OS === "ios"
+    ? {
+      presentation: "formSheet" as const,
+      sheetAllowedDetents: [0.5, 0.75, 1.0],
+      sheetGrabberVisible: true,
+    }
+    : { presentation: "modal" as const }),
+};
 
 const isWeb = Platform.OS === "web";
 
@@ -45,18 +57,20 @@ export default function RootLayout() {
       <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
         <React.Fragment>
           <StatusBar style="auto" />
-          <Stack>
+          <Stack screenOptions={{ headerShown: false }}>
             <Stack.Protected guard={isLoggedIn}>
               <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
               <Stack.Screen name="modal" options={{ presentation: "modal" }} />
             </Stack.Protected>
             <Stack.Protected guard={!isLoggedIn && hasCompletedOnboarding}>
-              <Stack.Screen name="sign-in" />
+              <Stack.Screen name="sign-in" options={signInScreenOptions} />
               <Stack.Protected guard={shouldCreateAccount}>
-                <Stack.Screen name="create-account" />
+                <Stack.Screen name="index" options={{ headerShown: false }} />
+                <Stack.Screen name="create-account" options={signInScreenOptions} />
               </Stack.Protected>
             </Stack.Protected>
             <Stack.Protected guard={!hasCompletedOnboarding}>
+              <Stack.Screen name="index" options={{ headerShown: false }} />
               <Stack.Screen name="onboarding" options={{ headerShown: false }} />
             </Stack.Protected>
           </Stack>
