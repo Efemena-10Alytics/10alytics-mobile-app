@@ -1,5 +1,5 @@
-import { Redirect } from "expo-router";
+import { StartScreen } from "@/screens/start/start-screen";
 
 export default function App() {
-    return <Redirect href="/onboarding" />;
+    return <StartScreen />;
 }

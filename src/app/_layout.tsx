@@ -8,7 +8,7 @@ import { Platform } from "react-native";
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 const signInScreenOptions = {
-  headerShown: true,
+  headerShown: false,
   title: "Sign In",
   contentStyle: { backgroundColor: "transparent" },
   ...(Platform.OS === "ios"
@@ -51,6 +51,8 @@ export default function RootLayout() {
   if (!_hasHydrated && !isWeb) {
     return null;
   }
+  console.log("isLoggedIn", isLoggedIn);
+
 
   return (
     <GestureHandlerRootView style={isWeb ? undefined : { flex: 1 }}>
@@ -58,20 +60,19 @@ export default function RootLayout() {
         <React.Fragment>
           <StatusBar style="auto" />
           <Stack screenOptions={{ headerShown: false }}>
-            <Stack.Protected guard={isLoggedIn}>
-              <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-              <Stack.Screen name="modal" options={{ presentation: "modal" }} />
+            <Stack.Screen name="index" options={{ headerShown: false }} />
+            <Stack.Protected guard={!hasCompletedOnboarding}>
+              <Stack.Screen name="onboarding" options={{ headerShown: false }} />
             </Stack.Protected>
             <Stack.Protected guard={!isLoggedIn && hasCompletedOnboarding}>
               <Stack.Screen name="sign-in" options={signInScreenOptions} />
               <Stack.Protected guard={shouldCreateAccount}>
-                <Stack.Screen name="index" options={{ headerShown: false }} />
                 <Stack.Screen name="create-account" options={signInScreenOptions} />
               </Stack.Protected>
             </Stack.Protected>
-            <Stack.Protected guard={!hasCompletedOnboarding}>
-              <Stack.Screen name="index" options={{ headerShown: false }} />
-              <Stack.Screen name="onboarding" options={{ headerShown: false }} />
+            <Stack.Protected guard={isLoggedIn}>
+              <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+              <Stack.Screen name="modal" options={{ presentation: "modal" }} />
             </Stack.Protected>
           </Stack>
         </React.Fragment>
