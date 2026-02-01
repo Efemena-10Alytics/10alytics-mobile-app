@@ -237,7 +237,7 @@ export function StartScreen() {
               style={styles.buttonBlur}
             />
             <LinearGradient
-              colors={Gradients.primary}
+              colors={Gradients.primary as [string, string]}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 1 }}
               style={styles.buttonGradient}
