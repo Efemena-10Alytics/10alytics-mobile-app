@@ -179,13 +179,13 @@ export function ProfileScreen() {
       title: "Settings",
       icon: "gearshape.fill" as const,
       color: colors.textSecondary,
-      onPress: () => { },
+      onPress: () => router.push("/settings"),
     },
   ];
 
   const handleSignOut = async () => {
     await logOut();
-    router.replace("/sign-in");
+    router.replace("/");
   };
 
   return (
@@ -200,7 +200,7 @@ export function ProfileScreen() {
         <View style={styles.profileHeader}>
           <View>
             <LinearGradient
-              colors={Gradients.primary}
+              colors={Gradients.primary as any}
               style={styles.avatarGlow}
             />
             <GlassCard
@@ -214,16 +214,23 @@ export function ProfileScreen() {
                 tint={isDark ? "dark" : "light"}
                 style={styles.avatarBlur}
               />
-              <SymbolView
-                name="person.circle.fill"
-                size={56}
-                tintColor={colors.primary}
-                type="hierarchical"
-              />
+              {user?.image ? (
+                <Animated.Image
+                  source={{ uri: user.image }}
+                  style={{ width: "100%", height: "100%" }}
+                />
+              ) : (
+                <SymbolView
+                  name="person.circle.fill"
+                  size={56}
+                  tintColor={colors.primary}
+                  type="hierarchical"
+                />
+              )}
             </GlassCard>
           </View>
           <Text style={[styles.userName, { color: colors.text }]}>
-            {user?.name || "David Adokuru"}
+            {user ? `${user.first_name} ${user.other_names}` : ""}
           </Text>
           <Text style={[styles.userEmail, { color: colors.textSecondary }]}>
             {user?.email || "david@10alytics.co"}
@@ -247,7 +254,7 @@ export function ProfileScreen() {
               >
                 <View style={styles.statCardContent}>
                   <LinearGradient
-                    colors={[`${stat.color}30`, `${stat.color}15`]}
+                    colors={[`${stat.color}30`, `${stat.color}15`] as const}
                     style={styles.statIconBox}
                   >
                     <SymbolView
@@ -281,7 +288,7 @@ export function ProfileScreen() {
             <GlassCard animated={false} variant="light" style={{ marginBottom: GlassStyles.spacing.sm }}>
               <PressableScale onPress={item.onPress} style={styles.menuItem}>
                 <LinearGradient
-                  colors={[`${item.color}25`, `${item.color}10`]}
+                  colors={[`${item.color}25`, `${item.color}10`] as const}
                   style={styles.menuIconBox}
                 >
                   <SymbolView

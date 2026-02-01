@@ -23,7 +23,7 @@ function IOSTabLayout() {
         <Icon sf="square.grid.2x2" drawable="" />
         <Label>Dashboard</Label>
       </NativeTabs.Trigger>
-      <NativeTabs.Trigger name="(courses)">
+      <NativeTabs.Trigger name="courses">
         <Icon sf="book.closed" drawable="" />
         <Label>Courses</Label>
       </NativeTabs.Trigger>
@@ -105,7 +105,7 @@ function AndroidTabLayout() {
         }}
       />
       <Tabs.Screen
-        name="(courses)"
+        name="courses"
         options={{
           title: "Courses",
           tabBarIcon: ({ color, focused }) => (

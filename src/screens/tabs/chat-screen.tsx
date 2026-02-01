@@ -5,6 +5,7 @@ import { PressableScale, Text, TextInput, View } from "@/tw";
 import { Animated } from "@/tw/animated";
 import { BlurView } from "expo-blur";
 import { LinearGradient } from "expo-linear-gradient";
+import { router } from "expo-router";
 import { SymbolView } from "expo-symbols";
 import React, { useState } from "react";
 import { FlatList, StyleSheet } from "react-native";
@@ -223,9 +224,15 @@ export function ChatScreen() {
   const renderItem = ({ item, index }: { item: typeof GROUPS[0]; index: number }) => (
     <Animated.View entering={FadeInRight.delay(100 + index * 50).springify()}>
       <GlassCard animated={false} variant="light" style={{ marginBottom: GlassStyles.spacing.sm }}>
-        <PressableScale style={styles.chatItem}>
+        <PressableScale
+          style={styles.chatItem}
+          onPress={() => router.push({
+            pathname: "/chat-room",
+            params: { id: item.id, name: item.name }
+          })}
+        >
           <LinearGradient
-            colors={[`${item.color}30`, `${item.color}15`]}
+            colors={[`${item.color}30`, `${item.color}15`] as const}
             style={styles.avatarContainer}
           >
             <BlurView
@@ -256,7 +263,7 @@ export function ChatScreen() {
               </Text>
               {item.unread > 0 && (
                 <LinearGradient
-                  colors={Gradients.primary}
+                  colors={Gradients.primary as any}
                   style={styles.unreadBadge}
                 >
                   <Text style={styles.unreadText}>{item.unread}</Text>

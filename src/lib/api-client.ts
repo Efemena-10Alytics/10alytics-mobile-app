@@ -13,7 +13,7 @@ interface LoginResponse {
   user: {
     id: string;
     first_name: string;
-    last_name: string;
+    other_names: string;
     email: string;
     image?: string;
   };
@@ -141,7 +141,7 @@ class ApiClient {
 
   async register(
     first_name: string,
-    last_name: string,
+    other_names: string,
     email: string,
     password: string
   ): Promise<{
@@ -150,7 +150,7 @@ class ApiClient {
   }> {
     return this.request<LoginResponse>("/api/v2/register", {
       method: "POST",
-      body: JSON.stringify({ first_name, last_name, email, password }),
+      body: JSON.stringify({ first_name, other_names, email, password }),
     });
   }
 

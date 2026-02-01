@@ -207,12 +207,27 @@ export function DashboardScreen() {
     { icon: "video.fill" as const, label: "Join Class", color: "#27AE60" },
   ];
 
+  const StatsRow = () => (
+    <Animated.View entering={FadeInDown.delay(100).springify()}>
+      <View style={{ flexDirection: "row", gap: 16, marginBottom: 20 }}>
+        <GlassCard animated={false} variant="light" style={{ flex: 1, alignItems: "center", paddingVertical: 16 }}>
+          <Text style={{ fontSize: 24, fontWeight: "800", color: colors.primary }}>3</Text>
+          <Text style={{ fontSize: 12, opacity: 0.6, color: colors.text }}>Active Courses</Text>
+        </GlassCard>
+        <GlassCard animated={false} variant="light" style={{ flex: 1, alignItems: "center", paddingVertical: 16 }}>
+          <Text style={{ fontSize: 24, fontWeight: "800", color: "#4A90E2" }}>48</Text>
+          <Text style={{ fontSize: 12, opacity: 0.6, color: colors.text }}>Lessons Done</Text>
+        </GlassCard>
+      </View>
+    </Animated.View>
+  );
+
   return (
     <View style={[styles.container, { backgroundColor: isDark ? colors.background : "#F5F0EB" }]}>
       {/* Gradient Header */}
       <Animated.View entering={FadeInDown.delay(50).springify()}>
         <LinearGradient
-          colors={Gradients.warmSunset}
+          colors={Gradients.warmSunset as any}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
           style={[styles.headerGradient, { paddingTop: insets.top + 20 }]}
@@ -255,7 +270,7 @@ export function DashboardScreen() {
                 ]}
               >
                 <LinearGradient
-                  colors={Gradients.primary}
+                  colors={Gradients.primary as any}
                   start={{ x: 0, y: 0 }}
                   end={{ x: 1, y: 0 }}
                   style={[styles.progressBar, { width: `${enrolledProgress}%` }]}
@@ -308,7 +323,7 @@ export function DashboardScreen() {
           <GlassCard animated={false} variant="light">
             <PressableScale style={styles.continueCard}>
               <LinearGradient
-                colors={Gradients.primary}
+                colors={Gradients.primary as any}
                 style={styles.continueIconBox}
               >
                 <SymbolView name="play.fill" size={24} tintColor="#fff" type="hierarchical" />

@@ -15,17 +15,17 @@ type UserState = {
   user: {
     id: string;
     first_name: string;
-    last_name: string;
+    other_names: string;
     email: string;
     image?: string;
   } | null;
-  logIn: (user?: { id: string; first_name: string; last_name: string; email: string; image?: string }) => void;
+  logIn: (user?: { id: string; first_name: string; other_names: string; email: string; image?: string }) => void;
   logOut: () => Promise<void>;
   completeOnboarding: () => void;
   resetOnboarding: () => void;
   logInAsVip: () => void;
   setHasHydrated: (value: boolean) => void;
-  setUser: (user: { id: string; first_name: string; last_name: string; email: string; image?: string } | null) => void;
+  setUser: (user: { id: string; first_name: string; other_names: string; email: string; image?: string } | null) => void;
   checkAuth: () => Promise<void>;
 };
 

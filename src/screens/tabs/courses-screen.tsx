@@ -1,19 +1,17 @@
 import { GlassCard } from "@/components/ui/GlassCard";
 import { Colors, GlassStyles } from "@/constants/theme";
 import { useColorScheme } from "@/hooks/use-color-scheme";
-import { PressableScale, ScrollView, Text, View } from "@/tw";
+import { PressableScale, Text, View } from "@/tw";
 import { Animated } from "@/tw/animated";
-import { FlashList } from "@shopify/flash-list";
 import { LinearGradient } from "expo-linear-gradient";
 import { Link } from "expo-router";
 import { SymbolView } from "expo-symbols";
 import React from "react";
-import { Dimensions, StyleSheet } from "react-native";
-import { FadeInDown, FadeInRight } from "react-native-reanimated";
+import { Dimensions, FlatList, StyleSheet } from "react-native";
+import { FadeInRight } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const { width } = Dimensions.get("window");
-const COURSE_ROW_HEIGHT = 200;
 
 const styles = StyleSheet.create({
   container: {
@@ -21,8 +19,8 @@ const styles = StyleSheet.create({
   },
   listContent: {
     paddingHorizontal: GlassStyles.spacing.md,
-    paddingTop: GlassStyles.spacing.md,
-    paddingBottom: 120,
+    paddingTop: GlassStyles.spacing.xs,
+    paddingBottom: 100,
   },
   statsRow: {
     flexDirection: "row",
@@ -48,8 +46,8 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    marginBottom: GlassStyles.spacing.md,
-    marginTop: GlassStyles.spacing.sm,
+    marginBottom: GlassStyles.spacing.sm,
+    marginTop: GlassStyles.spacing.xs,
   },
   sectionTitle: {
     fontSize: 20,
@@ -92,7 +90,7 @@ const styles = StyleSheet.create({
     opacity: 0.3,
   },
   courseCard: {
-    marginBottom: GlassStyles.spacing.md,
+    marginBottom: GlassStyles.spacing.sm,
     overflow: "hidden",
     padding: 0,
   },
@@ -100,8 +98,8 @@ const styles = StyleSheet.create({
     flexDirection: "row",
   },
   courseThumbnail: {
-    width: 100,
-    height: "100%",
+    width: 90,
+    minHeight: 120,
     alignItems: "center",
     justifyContent: "center",
   },
@@ -110,13 +108,14 @@ const styles = StyleSheet.create({
   },
   courseContent: {
     flex: 1,
-    padding: GlassStyles.spacing.md,
+    paddingVertical: GlassStyles.spacing.sm,
+    paddingRight: GlassStyles.spacing.sm,
   },
   courseHeader: {
     flexDirection: "row",
     alignItems: "flex-start",
     justifyContent: "space-between",
-    marginBottom: GlassStyles.spacing.sm,
+    marginBottom: 4,
   },
   courseTitle: {
     fontSize: 17,
@@ -135,9 +134,9 @@ const styles = StyleSheet.create({
     fontWeight: "700",
   },
   courseInstructor: {
-    fontSize: 14,
+    fontSize: 13,
     opacity: 0.7,
-    marginBottom: GlassStyles.spacing.md,
+    marginBottom: GlassStyles.spacing.sm,
   },
   progressSection: {
     marginBottom: GlassStyles.spacing.sm,
@@ -168,9 +167,9 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    paddingVertical: 10,
+    paddingVertical: 8,
     borderRadius: GlassStyles.borderRadius.md,
-    marginTop: GlassStyles.spacing.sm,
+    marginTop: 8,
   },
   continueButtonText: {
     fontSize: 14,
@@ -241,12 +240,12 @@ export function CoursesScreen() {
   ];
 
   const renderCourseCard = ({ item: course }: { item: CourseItem }) => (
-    <Link href={`/(tabs)/(courses)/course/${course.id}`} asChild>
+    <Link href={{ pathname: "/course-details", params: { id: course.id } }} asChild>
       <PressableScale>
         <GlassCard animated={false} variant="light" style={styles.courseCard}>
           <View style={styles.courseCardInner}>
             <LinearGradient
-              colors={[`${course.color}30`, `${course.color}10`]}
+              colors={[`${course.color}30`, `${course.color}10`] as const}
               style={styles.courseThumbnail}
             >
               <Text style={styles.courseThumbnailIcon}>{course.thumbnail}</Text>
@@ -284,7 +283,7 @@ export function CoursesScreen() {
                   ]}
                 >
                   <LinearGradient
-                    colors={[course.color, `${course.color}CC`]}
+                    colors={[course.color, `${course.color}CC`] as const}
                     start={{ x: 0, y: 0 }}
                     end={{ x: 1, y: 0 }}
                     style={[styles.progressBar, { width: `${course.progress}%` }]}
@@ -300,7 +299,7 @@ export function CoursesScreen() {
                 </View>
               </View>
               <LinearGradient
-                colors={[`${course.color}20`, `${course.color}10`]}
+                colors={[`${course.color}20`, `${course.color}10`] as const}
                 style={styles.continueButton}
               >
                 <SymbolView
@@ -321,86 +320,18 @@ export function CoursesScreen() {
   );
 
   const ListHeader = () => (
-    <>
-      {/* Stats Row */}
-      <Animated.View entering={FadeInDown.delay(100).springify()}>
-        <View style={styles.statsRow}>
-          <GlassCard animated={false} variant="light" style={styles.statCard}>
-            <Text style={[styles.statValue, { color: colors.primary }]}>3</Text>
-            <Text style={[styles.statLabel, { color: colors.textSecondary }]}>
-              Active Courses
-            </Text>
-          </GlassCard>
-          <GlassCard animated={false} variant="light" style={styles.statCard}>
-            <Text style={[styles.statValue, { color: "#4A90E2" }]}>48</Text>
-            <Text style={[styles.statLabel, { color: colors.textSecondary }]}>
-              Lessons Done
-            </Text>
-          </GlassCard>
-        </View>
-      </Animated.View>
-
-      {/* Achievements */}
-      <Animated.View entering={FadeInRight.delay(200).springify()}>
-        <View style={styles.sectionHeader}>
-          <Text style={[styles.sectionTitle, { color: colors.text }]}>Achievements</Text>
-          <PressableScale>
-            <Text style={[styles.seeAllText, { color: colors.primary }]}>View All</Text>
-          </PressableScale>
-        </View>
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          style={styles.achievementsScroll}
-        >
-          {achievements.map((achievement, index) => (
-            <Animated.View
-              key={achievement.id}
-              entering={FadeInRight.delay(300 + index * 100).springify()}
-            >
-              <GlassCard
-                animated={false}
-                variant="medium"
-                style={styles.achievementCard}
-                showGradientBorder
-              >
-                <View
-                  style={[
-                    styles.achievementGlow,
-                    { backgroundColor: achievement.color },
-                  ]}
-                />
-                <Text style={styles.achievementIcon}>{achievement.icon}</Text>
-                <Text style={[styles.achievementTitle, { color: colors.text }]}>
-                  {achievement.title}
-                </Text>
-                <Text style={[styles.achievementPoints, { color: achievement.color }]}>
-                  {achievement.points} pts
-                </Text>
-              </GlassCard>
-            </Animated.View>
-          ))}
-        </ScrollView>
-      </Animated.View>
-
-      {/* My Courses Header */}
-      <Animated.View entering={FadeInRight.delay(400).springify()}>
-        <View style={styles.sectionHeader}>
-          <Text style={[styles.sectionTitle, { color: colors.text }]}>My Courses</Text>
-          <PressableScale>
-            <Text style={[styles.seeAllText, { color: colors.primary }]}>See All</Text>
-          </PressableScale>
-        </View>
-      </Animated.View>
-    </>
+    <Animated.View entering={FadeInRight.delay(100).springify()}>
+      <View style={styles.sectionHeader}>
+        <Text style={[styles.sectionTitle, { color: colors.text }]}>My Courses</Text>
+      </View>
+    </Animated.View>
   );
 
   return (
-    <FlashList
+    <FlatList
       data={courses}
       renderItem={renderCourseCard}
       keyExtractor={(item) => item.id.toString()}
-      estimatedItemSize={COURSE_ROW_HEIGHT}
       contentInsetAdjustmentBehavior="automatic"
       contentContainerStyle={styles.listContent}
       ListHeaderComponent={ListHeader}
@@ -409,3 +340,4 @@ export function CoursesScreen() {
     />
   );
 }
+

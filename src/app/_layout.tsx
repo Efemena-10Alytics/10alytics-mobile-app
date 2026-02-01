@@ -71,6 +71,30 @@ export default function RootLayout() {
             </Stack.Protected>
             <Stack.Protected guard={isLoggedIn}>
               <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+              <Stack.Screen
+                name="chat-room"
+                options={{
+                  headerShown: false,
+                  presentation: "card",
+                  animation: "default",
+                }}
+              />
+              <Stack.Screen
+                name="course-details"
+                options={{
+                  headerShown: false,
+                  presentation: "card",
+                  animation: "default",
+                }}
+              />
+              <Stack.Screen
+                name="settings"
+                options={{
+                  headerShown: false,
+                  presentation: "card",
+                  animation: "default",
+                }}
+              />
             </Stack.Protected>
           </Stack>
         </React.Fragment>
