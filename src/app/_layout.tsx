@@ -7,19 +7,6 @@ import React, { useEffect } from "react";
 import { Platform } from "react-native";
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
-const signInScreenOptions = {
-  headerShown: false,
-  title: "Sign In",
-  contentStyle: { backgroundColor: "transparent" },
-  ...(Platform.OS === "ios"
-    ? {
-      presentation: "formSheet" as const,
-      sheetAllowedDetents: [0.5, 0.75, 1.0],
-      sheetGrabberVisible: true,
-    }
-    : { presentation: "modal" as const }),
-};
-
 const isWeb = Platform.OS === "web";
 
 if (!isWeb) {
@@ -67,14 +54,23 @@ export default function RootLayout() {
               <Stack.Screen name="onboarding" options={{ headerShown: false }} />
             </Stack.Protected>
             <Stack.Protected guard={!isLoggedIn && hasCompletedOnboarding}>
-              <Stack.Screen name="sign-in" options={signInScreenOptions} />
+              <Stack.Screen name="sign-in" options={{
+                headerShown: false,
+                title: "Sign In",
+                contentStyle: { backgroundColor: "transparent" },
+                presentation: "modal" as const,
+              }} />
               <Stack.Protected guard={shouldCreateAccount}>
-                <Stack.Screen name="create-account" options={signInScreenOptions} />
+                <Stack.Screen name="create-account" options={{
+                  headerShown: false,
+                  title: "Create Account",
+                  contentStyle: { backgroundColor: "transparent" },
+                  presentation: "modal" as const,
+                }} />
               </Stack.Protected>
             </Stack.Protected>
             <Stack.Protected guard={isLoggedIn}>
               <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-              <Stack.Screen name="modal" options={{ presentation: "modal" }} />
             </Stack.Protected>
           </Stack>
         </React.Fragment>

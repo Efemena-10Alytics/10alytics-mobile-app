@@ -1,7 +1,140 @@
+import { GlassCard } from "@/components/ui/GlassCard";
+import { Colors, GlassStyles, Gradients } from "@/constants/theme";
+import { useColorScheme } from "@/hooks/use-color-scheme";
 import { PressableScale, Text, TextInput, View } from "@/tw";
+import { Animated } from "@/tw/animated";
+import { BlurView } from "expo-blur";
+import { LinearGradient } from "expo-linear-gradient";
 import { SymbolView } from "expo-symbols";
 import React, { useState } from "react";
-import { FlatList, PlatformColor, StyleSheet } from "react-native";
+import { FlatList, StyleSheet } from "react-native";
+import { FadeInDown, FadeInRight } from "react-native-reanimated";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  header: {
+    paddingHorizontal: GlassStyles.spacing.lg,
+    paddingBottom: GlassStyles.spacing.md,
+  },
+  headerRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: GlassStyles.spacing.md,
+  },
+  headerTitle: {
+    fontSize: 34,
+    fontWeight: "800",
+    letterSpacing: -0.5,
+  },
+  newChatButton: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  searchContainer: {
+    marginBottom: GlassStyles.spacing.md,
+  },
+  searchBar: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: GlassStyles.spacing.md,
+    height: 48,
+    borderRadius: GlassStyles.borderRadius.md,
+    overflow: "hidden",
+  },
+  searchBlur: {
+    ...StyleSheet.absoluteFillObject,
+  },
+  searchInput: {
+    flex: 1,
+    marginLeft: GlassStyles.spacing.sm,
+    fontSize: 17,
+  },
+  listContent: {
+    paddingHorizontal: GlassStyles.spacing.md,
+    paddingBottom: 120,
+  },
+  chatItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: GlassStyles.spacing.sm,
+  },
+  avatarContainer: {
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    alignItems: "center",
+    justifyContent: "center",
+    marginRight: GlassStyles.spacing.md,
+    overflow: "hidden",
+  },
+  avatarBlur: {
+    ...StyleSheet.absoluteFillObject,
+  },
+  avatar: {
+    fontSize: 28,
+  },
+  chatContent: {
+    flex: 1,
+  },
+  chatHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 4,
+  },
+  groupName: {
+    fontSize: 17,
+    fontWeight: "600",
+    flex: 1,
+    marginRight: GlassStyles.spacing.sm,
+  },
+  time: {
+    fontSize: 13,
+    opacity: 0.6,
+  },
+  chatFooter: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  lastMessage: {
+    fontSize: 15,
+    opacity: 0.7,
+    flex: 1,
+    marginRight: GlassStyles.spacing.sm,
+  },
+  unreadBadge: {
+    minWidth: 22,
+    height: 22,
+    borderRadius: 11,
+    alignItems: "center",
+    justifyContent: "center",
+    paddingHorizontal: 6,
+  },
+  unreadText: {
+    color: "#fff",
+    fontSize: 12,
+    fontWeight: "700",
+  },
+  sectionHeader: {
+    marginBottom: GlassStyles.spacing.md,
+    marginTop: GlassStyles.spacing.sm,
+  },
+  sectionTitle: {
+    fontSize: 14,
+    fontWeight: "700",
+    textTransform: "uppercase",
+    letterSpacing: 0.5,
+    opacity: 0.6,
+  },
+});
 
 const GROUPS = [
   {
@@ -77,67 +210,126 @@ const GROUPS = [
 ];
 
 export function ChatScreen() {
+  const colorScheme = useColorScheme();
+  const colors = Colors[colorScheme ?? "light"];
+  const isDark = colorScheme === "dark";
+  const insets = useSafeAreaInsets();
   const [searchQuery, setSearchQuery] = useState("");
 
   const filteredGroups = GROUPS.filter((group) =>
     group.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const renderItem = ({ item }: { item: typeof GROUPS[0] }) => (
-    <PressableScale style={styles.chatItem}>
-      <View style={[styles.avatarContainer, { backgroundColor: item.color + "20" }]}>
-        <Text style={styles.avatar}>{item.avatar}</Text>
-      </View>
-      <View style={styles.chatContent}>
-        <View style={styles.chatHeader}>
-          <Text style={styles.groupName} numberOfLines={1}>
-            {item.name}
-          </Text>
-          <Text style={styles.time}>{item.time}</Text>
-        </View>
-        <View style={styles.chatFooter}>
-          <Text style={styles.lastMessage} numberOfLines={1}>
-            {item.lastMessage}
-          </Text>
-          {item.unread > 0 && (
-            <View style={styles.unreadBadge}>
-              <Text style={styles.unreadText}>{item.unread}</Text>
+  const renderItem = ({ item, index }: { item: typeof GROUPS[0]; index: number }) => (
+    <Animated.View entering={FadeInRight.delay(100 + index * 50).springify()}>
+      <GlassCard animated={false} variant="light" style={{ marginBottom: GlassStyles.spacing.sm }}>
+        <PressableScale style={styles.chatItem}>
+          <LinearGradient
+            colors={[`${item.color}30`, `${item.color}15`]}
+            style={styles.avatarContainer}
+          >
+            <BlurView
+              intensity={GlassStyles.blur.light}
+              tint={isDark ? "dark" : "light"}
+              style={styles.avatarBlur}
+            />
+            <Text style={styles.avatar}>{item.avatar}</Text>
+          </LinearGradient>
+          <View style={styles.chatContent}>
+            <View style={styles.chatHeader}>
+              <Text
+                style={[styles.groupName, { color: colors.text }]}
+                numberOfLines={1}
+              >
+                {item.name}
+              </Text>
+              <Text style={[styles.time, { color: colors.textSecondary }]}>
+                {item.time}
+              </Text>
             </View>
-          )}
-        </View>
-      </View>
-    </PressableScale>
+            <View style={styles.chatFooter}>
+              <Text
+                style={[styles.lastMessage, { color: colors.textSecondary }]}
+                numberOfLines={1}
+              >
+                {item.lastMessage}
+              </Text>
+              {item.unread > 0 && (
+                <LinearGradient
+                  colors={Gradients.primary}
+                  style={styles.unreadBadge}
+                >
+                  <Text style={styles.unreadText}>{item.unread}</Text>
+                </LinearGradient>
+              )}
+            </View>
+          </View>
+        </PressableScale>
+      </GlassCard>
+    </Animated.View>
   );
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: isDark ? colors.background : "#F5F0EB" }]}>
       {/* Header */}
-      <View style={styles.header}>
-        <Text style={styles.headerTitle}>Groups</Text>
-        <PressableScale style={styles.newChatButton}>
-          <SymbolView
-            name="square.and.pencil"
-            size={22}
-            tintColor={PlatformColor("systemBlue")}
-          />
-        </PressableScale>
-      </View>
+      <View style={[styles.header, { paddingTop: insets.top + GlassStyles.spacing.md }]}>
+        <Animated.View entering={FadeInDown.delay(50).springify()}>
+          <View style={styles.headerRow}>
+            <Text style={[styles.headerTitle, { color: colors.text }]}>Groups</Text>
+            <GlassCard
+              animated={false}
+              variant="light"
+              style={styles.newChatButton}
+            >
+              <PressableScale>
+                <SymbolView
+                  name="square.and.pencil"
+                  size={22}
+                  tintColor={colors.primary}
+                />
+              </PressableScale>
+            </GlassCard>
+          </View>
+        </Animated.View>
 
-      {/* Search Bar */}
-      <View style={styles.searchContainer}>
-        <View style={styles.searchBar}>
-          <SymbolView
-            name="magnifyingglass"
-            size={18}
-            tintColor={PlatformColor("secondaryLabel")}
-          />
-          <TextInput
-            style={styles.searchInput}
-            placeholder="Search groups..."
-            placeholderTextColor={PlatformColor("secondaryLabel")}
-            value={searchQuery}
-            onChangeText={setSearchQuery}
-          />
+        {/* Search Bar */}
+        <Animated.View entering={FadeInDown.delay(100).springify()}>
+          <View style={styles.searchContainer}>
+            <View
+              style={[
+                styles.searchBar,
+                {
+                  backgroundColor: colors.glass.background,
+                  borderWidth: 1,
+                  borderColor: colors.glass.border,
+                },
+              ]}
+            >
+              <BlurView
+                intensity={GlassStyles.blur.light}
+                tint={isDark ? "dark" : "light"}
+                style={styles.searchBlur}
+              />
+              <SymbolView
+                name="magnifyingglass"
+                size={18}
+                tintColor={colors.textSecondary}
+              />
+              <TextInput
+                style={[styles.searchInput, { color: colors.text }]}
+                placeholder="Search groups..."
+                placeholderTextColor={colors.textSecondary}
+                value={searchQuery}
+                onChangeText={setSearchQuery}
+              />
+            </View>
+          </View>
+        </Animated.View>
+
+        <View style={styles.sectionHeader}>
+          <Text style={[styles.sectionTitle, { color: colors.textSecondary }]}>
+            {filteredGroups.length} Groups
+          </Text>
         </View>
       </View>
 
@@ -145,118 +337,10 @@ export function ChatScreen() {
       <FlatList
         data={filteredGroups}
         renderItem={renderItem}
+        keyExtractor={(item) => item.id}
         contentContainerStyle={styles.listContent}
         showsVerticalScrollIndicator={false}
       />
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: PlatformColor("systemGroupedBackground"),
-  },
-  header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    paddingHorizontal: 20,
-    paddingTop: 60,
-    paddingBottom: 10,
-  },
-  headerTitle: {
-    fontSize: 34,
-    fontWeight: "bold",
-    color: PlatformColor("label"),
-  },
-  newChatButton: {
-    padding: 8,
-    borderRadius: 20,
-    backgroundColor: PlatformColor("secondarySystemBackground"),
-  },
-  searchContainer: {
-    paddingHorizontal: 16,
-    marginBottom: 10,
-  },
-  searchBar: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: PlatformColor("secondarySystemGroupedBackground"),
-    borderRadius: 12,
-    paddingHorizontal: 12,
-    height: 40,
-  },
-  searchInput: {
-    flex: 1,
-    marginLeft: 8,
-    fontSize: 17,
-    color: PlatformColor("label"),
-  },
-  listContent: {
-    paddingHorizontal: 16,
-    paddingBottom: 100, // Space for tab bar
-  },
-  chatItem: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingVertical: 12,
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: PlatformColor("separator"),
-  },
-  avatarContainer: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    alignItems: "center",
-    justifyContent: "center",
-    marginRight: 12,
-  },
-  avatar: {
-    fontSize: 24,
-  },
-  chatContent: {
-    flex: 1,
-  },
-  chatHeader: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginBottom: 4,
-  },
-  groupName: {
-    fontSize: 17,
-    fontWeight: "600",
-    color: PlatformColor("label"),
-    flex: 1,
-    marginRight: 8,
-  },
-  time: {
-    fontSize: 14,
-    color: PlatformColor("secondaryLabel"),
-  },
-  chatFooter: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-  },
-  lastMessage: {
-    fontSize: 15,
-    color: PlatformColor("secondaryLabel"),
-    flex: 1,
-    marginRight: 8,
-  },
-  unreadBadge: {
-    backgroundColor: "#007AFF",
-    borderRadius: 10,
-    minWidth: 20,
-    height: 20,
-    alignItems: "center",
-    justifyContent: "center",
-    paddingHorizontal: 6,
-  },
-  unreadText: {
-    color: "white",
-    fontSize: 12,
-    fontWeight: "bold",
-  },
-});
