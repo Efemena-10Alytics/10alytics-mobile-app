@@ -1,85 +1,86 @@
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { View, Text, Pressable, Image, Animated, Easing } from 'react-native';
+import { View, Text, Pressable, Image, ImageSourcePropType } from 'react-native';
 import Feather from '@expo/vector-icons/Feather';
 import useThemeColors from '@/contexts/ThemeColors';
 import { shadowPresets } from "@/utils/useShadow";
-import React, { useState, useRef, useEffect } from 'react';
+import React from 'react';
 
 interface JournalCardProps {
     title: string;
-    imageUrl: string;
+    imageUrl?: string;
+    image?: ImageSourcePropType;
     description: string;
     date?: string;
+    progress?: number;
+    actionLabel?: string;
+    onPress?: () => void;
 }
 
-export default function JournalCard({ title, imageUrl, description, date = 'Wednesday, Feb 5' }: JournalCardProps) {
-    const insets = useSafeAreaInsets();
-    const [isExpanded, setIsExpanded] = useState(false);
+export default function JournalCard({
+    title,
+    imageUrl,
+    image,
+    description,
+    date = 'Wednesday, Feb 5',
+    progress,
+    actionLabel = 'Continue',
+    onPress,
+}: JournalCardProps) {
     const colors = useThemeColors();
-    // Animated values - height for image, opacity for content, scale for image
-    const imageHeightAnim = useRef(new Animated.Value(0)).current;
-    const contentOpacityAnim = useRef(new Animated.Value(0)).current;
-    const imageScaleAnim = useRef(new Animated.Value(1.3)).current;
-
-    const handlePress = () => {
-        setIsExpanded(!isExpanded);
-    };
-
-    useEffect(() => {
-        Animated.parallel([
-            Animated.timing(imageHeightAnim, {
-                toValue: isExpanded ? 250 : 0,
-                duration: 400,
-                easing: Easing.bezier(0.25, 0.1, 0.25, 1), // subtle easing
-                useNativeDriver: false,
-            }),
-            Animated.timing(contentOpacityAnim, {
-                toValue: isExpanded ? 1 : 0,
-                duration: 500,
-                easing: Easing.bezier(0.25, 0.1, 0.25, 1), // subtle easing
-                useNativeDriver: true,
-            }),
-            Animated.timing(imageScaleAnim, {
-                toValue: isExpanded ? 1 : 1,
-                duration: 500,
-                //easing: Easing.bezier(0.25, 0.1, 0.25, 1), // subtle easing
-                useNativeDriver: true,
-            })
-        ]).start();
-    }, [isExpanded, imageHeightAnim, contentOpacityAnim, imageScaleAnim]);
+    const muted = colors.isDark ? 'rgba(255,255,255,0.65)' : 'rgba(17,17,17,0.6)';
+    const resolvedImageSource = image ?? (imageUrl ? { uri: imageUrl } : undefined);
 
     return (
-        <>
-            <Pressable
-                onPress={handlePress}
-                style={shadowPresets.large}
-                className=' bg-secondary overflow-hidden mb-global rounded-2xl' >
-                <Animated.View
-                    style={{ height: imageHeightAnim, borderTopLeftRadius: 20, borderTopRightRadius: 20 }}
-                    className='w-full overflow-hidden'>
-                    <Animated.View
-                        style={{
-                            //opacity: contentOpacityAnim,
-                            transform: [{ scale: imageScaleAnim }]
-                        }}
-                        className='w-full h-full items-start justify-start'>
-                        <Image source={{ uri: imageUrl }} className='w-full h-full' />
-                    </Animated.View>
-                </Animated.View>
-                <View className='p-6'>
-                    <Text className='text-sm text-text mb-0.5'>{date}</Text>
-                    <Text className='text-xl font-lora text-text'>{title}</Text>
-                    <Animated.View
-                        style={{ opacity: contentOpacityAnim }}
-                        className="w-full py-2  overflow-hidden">
-                        <Text className='text-base text-neutral-500 dark:text-neutral-400'>{description}</Text>
-                        <View className="w-full justify-end flex-row ml-auto mt-4    ">
-                            <Feather name='share-2' size={20} color={colors.icon} />
-                        </View>
-                    </Animated.View>
-                </View>
+        <Pressable
+            onPress={onPress}
+            style={shadowPresets.large}
+            className='bg-secondary overflow-hidden mb-global rounded-2xl'
+        >
+            <View className="flex-row p-5 gap-4">
+                {resolvedImageSource && (
+                    <Image
+                        source={resolvedImageSource}
+                        className="w-[96px] h-[96px] rounded-2xl"
+                    />
+                )}
+                <View className="flex-1">
+                    <Text className="text-xs uppercase tracking-wider" style={{ color: muted }}>
+                        {date}
+                    </Text>
+                    <Text className="text-lg font-bold text-text mt-1">
+                        {title}
+                    </Text>
+                    <Text className="text-sm mt-1" style={{ color: muted }} numberOfLines={2}>
+                        {description}
+                    </Text>
 
-            </Pressable>
-        </>
+                    {typeof progress === 'number' && (
+                        <View className="mt-3">
+                            <View
+                                className="h-2 rounded-full overflow-hidden"
+                                style={{ backgroundColor: colors.isDark ? '#2A2A2A' : '#E6E6E6' }}
+                            >
+                                <View
+                                    style={{
+                                        width: `${Math.max(0, Math.min(100, progress))}%`,
+                                        backgroundColor: colors.highlight,
+                                        height: '100%',
+                                    }}
+                                />
+                            </View>
+                            <Text className="text-xs mt-2" style={{ color: muted }}>
+                                {progress}% complete
+                            </Text>
+                        </View>
+                    )}
+
+                    <View className="flex-row items-center justify-between mt-4">
+                        <Pressable className="bg-text rounded-xl px-4 py-2">
+                            <Text className="text-invert font-semibold text-sm">{actionLabel}</Text>
+                        </Pressable>
+                        <Feather name='chevron-right' size={18} color={colors.icon} />
+                    </View>
+                </View>
+            </View>
+        </Pressable>
     );
 }

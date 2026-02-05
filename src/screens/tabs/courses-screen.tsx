@@ -1,17 +1,13 @@
-import { GlassCard } from "@/components/ui/GlassCard";
+import JournalCard from "@/components/JournalCard";
 import { Colors, GlassStyles } from "@/constants/theme";
 import { useColorScheme } from "@/hooks/use-color-scheme";
-import { PressableScale, Text, View } from "@/tw";
+import { Text, View } from "@/tw";
 import { Animated } from "@/tw/animated";
-import { LinearGradient } from "expo-linear-gradient";
-import { Link } from "expo-router";
-import { SymbolView } from "expo-symbols";
+import { router } from "expo-router";
 import React from "react";
-import { Dimensions, FlatList, StyleSheet } from "react-native";
+import { FlatList, StyleSheet } from "react-native";
 import { FadeInRight } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-
-const { width } = Dimensions.get("window");
 
 const styles = StyleSheet.create({
   container: {
@@ -21,26 +17,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: GlassStyles.spacing.md,
     paddingTop: GlassStyles.spacing.xs,
     paddingBottom: 100,
-  },
-  statsRow: {
-    flexDirection: "row",
-    gap: GlassStyles.spacing.md,
-    marginBottom: GlassStyles.spacing.lg,
-  },
-  statCard: {
-    flex: 1,
-    alignItems: "center",
-    paddingVertical: GlassStyles.spacing.lg,
-  },
-  statValue: {
-    fontSize: 32,
-    fontWeight: "800",
-    marginBottom: 4,
-  },
-  statLabel: {
-    fontSize: 14,
-    fontWeight: "500",
-    opacity: 0.7,
   },
   sectionHeader: {
     flexDirection: "row",
@@ -53,129 +29,6 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: "700",
   },
-  seeAllText: {
-    fontSize: 14,
-    fontWeight: "600",
-  },
-  achievementsScroll: {
-    marginBottom: GlassStyles.spacing.lg,
-  },
-  achievementCard: {
-    width: 120,
-    alignItems: "center",
-    paddingVertical: GlassStyles.spacing.lg,
-    marginRight: GlassStyles.spacing.md,
-  },
-  achievementIcon: {
-    fontSize: 40,
-    marginBottom: GlassStyles.spacing.sm,
-  },
-  achievementTitle: {
-    fontSize: 14,
-    fontWeight: "600",
-    textAlign: "center",
-  },
-  achievementPoints: {
-    fontSize: 12,
-    marginTop: 4,
-    fontWeight: "700",
-  },
-  achievementGlow: {
-    position: "absolute",
-    top: -10,
-    left: "25%",
-    width: "50%",
-    height: 20,
-    borderRadius: 10,
-    opacity: 0.3,
-  },
-  courseCard: {
-    marginBottom: GlassStyles.spacing.sm,
-    overflow: "hidden",
-    padding: 0,
-  },
-  courseCardInner: {
-    flexDirection: "row",
-  },
-  courseThumbnail: {
-    width: 90,
-    minHeight: 120,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  courseThumbnailIcon: {
-    fontSize: 48,
-  },
-  courseContent: {
-    flex: 1,
-    paddingVertical: GlassStyles.spacing.sm,
-    paddingRight: GlassStyles.spacing.sm,
-  },
-  courseHeader: {
-    flexDirection: "row",
-    alignItems: "flex-start",
-    justifyContent: "space-between",
-    marginBottom: 4,
-  },
-  courseTitle: {
-    fontSize: 17,
-    fontWeight: "700",
-    flex: 1,
-    marginRight: GlassStyles.spacing.sm,
-  },
-  levelBadge: {
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: GlassStyles.borderRadius.full,
-    borderWidth: 1,
-  },
-  levelText: {
-    fontSize: 11,
-    fontWeight: "700",
-  },
-  courseInstructor: {
-    fontSize: 13,
-    opacity: 0.7,
-    marginBottom: GlassStyles.spacing.sm,
-  },
-  progressSection: {
-    marginBottom: GlassStyles.spacing.sm,
-  },
-  progressBarContainer: {
-    height: 8,
-    borderRadius: 4,
-    overflow: "hidden",
-    marginBottom: 6,
-  },
-  progressBar: {
-    height: "100%",
-    borderRadius: 4,
-  },
-  progressStats: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-  },
-  progressText: {
-    fontSize: 12,
-    opacity: 0.7,
-  },
-  progressPercent: {
-    fontSize: 12,
-    fontWeight: "700",
-  },
-  continueButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    paddingVertical: 8,
-    borderRadius: GlassStyles.borderRadius.md,
-    marginTop: 8,
-  },
-  continueButtonText: {
-    fontSize: 14,
-    fontWeight: "700",
-    marginLeft: 6,
-  },
 });
 
 type CourseItem = {
@@ -183,7 +36,7 @@ type CourseItem = {
   title: string;
   instructor: string;
   progress: number;
-  thumbnail: string;
+  image: any;
   lessons: number;
   completed: number;
   level: string;
@@ -202,7 +55,7 @@ export function CoursesScreen() {
       title: "React Native Fundamentals",
       instructor: "John Doe",
       progress: 75,
-      thumbnail: "📱",
+      image: require("@/assets/courses/fsds.webp"),
       lessons: 24,
       completed: 18,
       level: "Beginner",
@@ -213,7 +66,7 @@ export function CoursesScreen() {
       title: "Advanced TypeScript",
       instructor: "Jane Smith",
       progress: 45,
-      thumbnail: "📘",
+      image: require("@/assets/courses/devops.webp"),
       lessons: 32,
       completed: 14,
       level: "Intermediate",
@@ -224,7 +77,7 @@ export function CoursesScreen() {
       title: "UI/UX Design Mastery",
       instructor: "Alex Johnson",
       progress: 90,
-      thumbnail: "🎨",
+      image: require("@/assets/courses/product-design.webp"),
       lessons: 18,
       completed: 16,
       level: "Advanced",
@@ -232,91 +85,18 @@ export function CoursesScreen() {
     },
   ];
 
-  const achievements = [
-    { id: 1, title: "First Course", icon: "🎯", points: 100, color: "#DA6728" },
-    { id: 2, title: "Week Warrior", icon: "🔥", points: 250, color: "#E74C3C" },
-    { id: 3, title: "Perfect Week", icon: "⭐", points: 500, color: "#F1C40F" },
-    { id: 4, title: "Quick Learner", icon: "⚡", points: 150, color: "#4A90E2" },
-  ];
-
   const renderCourseCard = ({ item: course }: { item: CourseItem }) => (
-    <Link href={{ pathname: "/course-details", params: { id: course.id } }} asChild>
-      <PressableScale>
-        <GlassCard animated={false} variant="light" style={styles.courseCard}>
-          <View style={styles.courseCardInner}>
-            <LinearGradient
-              colors={[`${course.color}30`, `${course.color}10`] as const}
-              style={styles.courseThumbnail}
-            >
-              <Text style={styles.courseThumbnailIcon}>{course.thumbnail}</Text>
-            </LinearGradient>
-            <View style={styles.courseContent}>
-              <View style={styles.courseHeader}>
-                <Text
-                  style={[styles.courseTitle, { color: colors.text }]}
-                  numberOfLines={1}
-                >
-                  {course.title}
-                </Text>
-                <View
-                  style={[
-                    styles.levelBadge,
-                    {
-                      backgroundColor: `${course.color}15`,
-                      borderColor: `${course.color}40`,
-                    },
-                  ]}
-                >
-                  <Text style={[styles.levelText, { color: course.color }]}>
-                    {course.level}
-                  </Text>
-                </View>
-              </View>
-              <Text style={[styles.courseInstructor, { color: colors.textSecondary }]}>
-                {course.instructor} • {course.lessons} lessons
-              </Text>
-              <View style={styles.progressSection}>
-                <View
-                  style={[
-                    styles.progressBarContainer,
-                    { backgroundColor: `${course.color}20` },
-                  ]}
-                >
-                  <LinearGradient
-                    colors={[course.color, `${course.color}CC`] as const}
-                    start={{ x: 0, y: 0 }}
-                    end={{ x: 1, y: 0 }}
-                    style={[styles.progressBar, { width: `${course.progress}%` }]}
-                  />
-                </View>
-                <View style={styles.progressStats}>
-                  <Text style={[styles.progressText, { color: colors.textSecondary }]}>
-                    {course.completed}/{course.lessons} completed
-                  </Text>
-                  <Text style={[styles.progressPercent, { color: course.color }]}>
-                    {course.progress}%
-                  </Text>
-                </View>
-              </View>
-              <LinearGradient
-                colors={[`${course.color}20`, `${course.color}10`] as const}
-                style={styles.continueButton}
-              >
-                <SymbolView
-                  name="play.circle.fill"
-                  size={16}
-                  tintColor={course.color}
-                  type="hierarchical"
-                />
-                <Text style={[styles.continueButtonText, { color: course.color }]}>
-                  Continue Learning
-                </Text>
-              </LinearGradient>
-            </View>
-          </View>
-        </GlassCard>
-      </PressableScale>
-    </Link>
+    <JournalCard
+      title={course.title}
+      description={`${course.instructor} • ${course.lessons} lessons`}
+      date={course.level}
+      progress={course.progress}
+      actionLabel={course.progress > 0 ? "Continue" : "Start"}
+      image={course.image}
+      onPress={() =>
+        router.push({ pathname: "/course-details", params: { id: course.id } })
+      }
+    />
   );
 
   const ListHeader = () => (
@@ -340,4 +120,3 @@ export function CoursesScreen() {
     />
   );
 }
-
