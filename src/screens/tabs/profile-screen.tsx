@@ -1,19 +1,15 @@
-import { GlassCard } from "@/components/ui/GlassCard";
-import { Colors, GlassStyles, Gradients } from "@/constants/theme";
-import { useColorScheme } from "@/hooks/use-color-scheme";
+import useThemeColors from "@/contexts/ThemeColors";
+import { GlassStyles } from "@/constants/theme";
 import { PressableScale, ScrollView, Text, View } from "@/tw";
 import { Animated } from "@/tw/animated";
 import { useAuthStore } from "@/utils/auth-store";
-import { BlurView } from "expo-blur";
 import { LinearGradient } from "expo-linear-gradient";
 import { router } from "expo-router";
 import { SymbolView } from "expo-symbols";
 import React from "react";
-import { Dimensions, StyleSheet } from "react-native";
+import { Image, StyleSheet } from "react-native";
 import { FadeInDown, FadeInRight, FadeInUp } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-
-const { width } = Dimensions.get("window");
 
 const styles = StyleSheet.create({
   container: {
@@ -21,166 +17,122 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     paddingHorizontal: GlassStyles.spacing.md,
-    paddingTop: GlassStyles.spacing.md,
     paddingBottom: 120,
+    gap: 22,
   },
-  profileHeader: {
-    alignItems: "center",
-    marginBottom: GlassStyles.spacing.xl,
-  },
-  avatarContainer: {
-    width: 110,
-    height: 110,
-    borderRadius: 55,
-    alignItems: "center",
-    justifyContent: "center",
-    marginBottom: GlassStyles.spacing.md,
-    overflow: "hidden",
-  },
-  avatarBlur: {
-    ...StyleSheet.absoluteFillObject,
-  },
-  avatarGlow: {
-    position: "absolute",
-    width: 130,
-    height: 130,
-    borderRadius: 65,
-    opacity: 0.3,
-  },
-  userName: {
-    fontSize: 26,
-    fontWeight: "800",
-    letterSpacing: -0.5,
-    marginBottom: 4,
-  },
-  userEmail: {
-    fontSize: 16,
-    opacity: 0.7,
-  },
-  statsGrid: {
+  headerRow: {
     flexDirection: "row",
-    flexWrap: "wrap",
-    gap: GlassStyles.spacing.md,
-    marginBottom: GlassStyles.spacing.lg,
-  },
-  statCard: {
-    width: (width - GlassStyles.spacing.md * 3) / 2,
-  },
-  statCardContent: {
     alignItems: "center",
-    paddingVertical: GlassStyles.spacing.md,
+    justifyContent: "space-between",
   },
-  statIconBox: {
-    width: 52,
-    height: 52,
-    borderRadius: GlassStyles.borderRadius.md,
-    alignItems: "center",
-    justifyContent: "center",
-    marginBottom: GlassStyles.spacing.sm,
-  },
-  statValue: {
+  title: {
     fontSize: 28,
     fontWeight: "800",
-    marginBottom: 2,
   },
-  statLabel: {
+  subtitle: {
     fontSize: 14,
-    fontWeight: "500",
-    opacity: 0.7,
+    opacity: 0.6,
   },
-  sectionTitle: {
-    fontSize: 20,
-    fontWeight: "700",
-    marginBottom: GlassStyles.spacing.md,
-  },
-  menuItem: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: GlassStyles.spacing.sm,
-  },
-  menuIconBox: {
-    width: 48,
-    height: 48,
-    borderRadius: GlassStyles.borderRadius.md,
+  avatarWrap: {
+    width: 88,
+    height: 88,
+    borderRadius: 24,
+    overflow: "hidden",
     alignItems: "center",
     justifyContent: "center",
-    marginRight: GlassStyles.spacing.md,
   },
-  menuTitle: {
+  statRow: {
+    flexDirection: "row",
+    gap: 12,
+    marginTop: 6,
+    marginBottom: 4,
+  },
+  statCard: {
+    flex: 1,
+    borderRadius: 18,
+    paddingVertical: 14,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  statValue: {
+    fontSize: 20,
+    fontWeight: "800",
+  },
+  statLabel: {
+    fontSize: 12,
+    opacity: 0.6,
+  },
+  sectionTitle: {
+    fontSize: 14,
+    fontWeight: "700",
+    textTransform: "uppercase",
+    letterSpacing: 1,
+    opacity: 0.5,
+  },
+  card: {
+    borderRadius: 20,
+    overflow: "hidden",
+    marginTop: 6,
+  },
+  row: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingVertical: 16,
+    paddingHorizontal: 18,
+  },
+  rowLeft: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 12,
+  },
+  iconBox: {
+    width: 36,
+    height: 36,
+    borderRadius: 12,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  rowTitle: {
     fontSize: 16,
     fontWeight: "600",
-    flex: 1,
+  },
+  divider: {
+    height: 1,
+    opacity: 0.08,
+    marginLeft: 64,
   },
   signOutButton: {
-    marginTop: GlassStyles.spacing.lg,
+    borderRadius: 18,
     overflow: "hidden",
-    borderRadius: GlassStyles.borderRadius.lg,
+    marginTop: 6,
   },
   signOutContent: {
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "center",
-    paddingVertical: GlassStyles.spacing.md,
-    paddingHorizontal: GlassStyles.spacing.lg,
-  },
-  signOutText: {
-    fontSize: 16,
-    fontWeight: "700",
-    color: "#fff",
-    marginLeft: GlassStyles.spacing.sm,
+    justifyContent: "space-between",
+    paddingVertical: 16,
+    paddingHorizontal: 18,
   },
 });
 
 export function ProfileScreen() {
-  const colorScheme = useColorScheme();
-  const colors = Colors[colorScheme ?? "light"];
-  const isDark = colorScheme === "dark";
+  const colors = useThemeColors();
   const insets = useSafeAreaInsets();
   const { logOut, user } = useAuthStore();
 
   const stats = [
-    { label: "Courses", value: "12", icon: "book.closed.fill" as const, color: colors.primary },
-    { label: "Hours", value: "156", icon: "clock.fill" as const, color: "#4A90E2" },
-    { label: "Achievements", value: "8", icon: "trophy.fill" as const, color: "#9B59B6" },
-    { label: "Streak", value: "15", icon: "flame.fill" as const, color: "#E74C3C" },
+    { label: "Courses", value: "12", color: "#DA6728" },
+    { label: "Hours", value: "156", color: "#4A90E2" },
+    { label: "Streak", value: "15", color: "#E74C3C" },
   ];
 
   const menuItems = [
-    {
-      id: 1,
-      title: "My Courses",
-      icon: "book.closed.fill" as const,
-      color: colors.primary,
-      onPress: () => { },
-    },
-    {
-      id: 2,
-      title: "Achievements",
-      icon: "trophy.fill" as const,
-      color: "#9B59B6",
-      onPress: () => { },
-    },
-    {
-      id: 3,
-      title: "Learning Goals",
-      icon: "target" as const,
-      color: "#4A90E2",
-      onPress: () => { },
-    },
-    {
-      id: 4,
-      title: "Notifications",
-      icon: "bell.fill" as const,
-      color: "#FF9F0A",
-      onPress: () => { },
-    },
-    {
-      id: 5,
-      title: "Settings",
-      icon: "gearshape.fill" as const,
-      color: colors.textSecondary,
-      onPress: () => router.push("/settings"),
-    },
+    { id: 1, title: "My Courses", icon: "book.closed.fill" as const, color: "#DA6728", onPress: () => {} },
+    { id: 2, title: "Achievements", icon: "trophy.fill" as const, color: "#9B59B6", onPress: () => {} },
+    { id: 3, title: "Learning Goals", icon: "target" as const, color: "#4A90E2", onPress: () => {} },
+    { id: 4, title: "Notifications", icon: "bell.fill" as const, color: "#FF9F0A", onPress: () => {} },
+    { id: 5, title: "Settings", icon: "gearshape.fill" as const, color: colors.textSecondary, onPress: () => router.push("/settings") },
   ];
 
   const handleSignOut = async () => {
@@ -192,148 +144,67 @@ export function ProfileScreen() {
     <ScrollView
       contentInsetAdjustmentBehavior="automatic"
       showsVerticalScrollIndicator={false}
-      style={[styles.container, { backgroundColor: isDark ? colors.background : "#F5F0EB" }]}
-      contentContainerStyle={[styles.scrollContent, { paddingTop: insets.top + GlassStyles.spacing.lg }]}
+      style={[styles.container, { backgroundColor: colors.bg }]}
+      contentContainerStyle={[styles.scrollContent, { paddingTop: insets.top + 10 }]}
     >
-      {/* Profile Header */}
       <Animated.View entering={FadeInDown.delay(50).springify()}>
-        <View style={styles.profileHeader}>
+        <View style={styles.headerRow}>
           <View>
-            <LinearGradient
-              colors={Gradients.primary as any}
-              style={styles.avatarGlow}
-            />
-            <GlassCard
-              animated={false}
-              variant="light"
-              showGradientBorder
-              style={styles.avatarContainer}
-            >
-              <BlurView
-                intensity={GlassStyles.blur.light}
-                tint={isDark ? "dark" : "light"}
-                style={styles.avatarBlur}
-              />
-              {user?.image ? (
-                <Animated.Image
-                  source={{ uri: user.image }}
-                  style={{ width: "100%", height: "100%" }}
-                />
-              ) : (
-                <SymbolView
-                  name="person.circle.fill"
-                  size={56}
-                  tintColor={colors.primary}
-                  type="hierarchical"
-                />
-              )}
-            </GlassCard>
+            <Text style={[styles.title, { color: colors.text }]}>Profile</Text>
+            <Text style={[styles.subtitle, { color: colors.text }]}>Your learning space</Text>
           </View>
-          <Text style={[styles.userName, { color: colors.text }]}>
-            {user ? `${user.first_name} ${user.other_names}` : ""}
-          </Text>
-          <Text style={[styles.userEmail, { color: colors.textSecondary }]}>
-            {user?.email || "david@10alytics.co"}
-          </Text>
+          <View style={[styles.avatarWrap, { backgroundColor: colors.secondary }]}
+          >
+            {user?.image ? (
+              <Image source={{ uri: user.image }} style={{ width: "100%", height: "100%" }} />
+            ) : (
+              <SymbolView name="person.crop.circle.fill" size={52} tintColor={colors.icon} />
+            )}
+          </View>
         </View>
       </Animated.View>
 
-      {/* Stats Grid */}
-      <Animated.View entering={FadeInUp.delay(100).springify()}>
-        <View style={styles.statsGrid}>
-          {stats.map((stat, index) => (
-            <Animated.View
-              key={stat.label}
-              entering={FadeInDown.delay(200 + index * 100).springify()}
-            >
-              <GlassCard
-                animated={false}
-                variant="light"
-                style={styles.statCard}
-                showGradientBorder
-              >
-                <View style={styles.statCardContent}>
-                  <LinearGradient
-                    colors={[`${stat.color}30`, `${stat.color}15`] as const}
-                    style={styles.statIconBox}
-                  >
-                    <SymbolView
-                      name={stat.icon}
-                      size={24}
-                      tintColor={stat.color}
-                      type="hierarchical"
-                    />
-                  </LinearGradient>
-                  <Text style={[styles.statValue, { color: stat.color }]}>
-                    {stat.value}
-                  </Text>
-                  <Text style={[styles.statLabel, { color: colors.textSecondary }]}>
-                    {stat.label}
-                  </Text>
-                </View>
-              </GlassCard>
-            </Animated.View>
+      <Animated.View entering={FadeInRight.delay(120).springify()}>
+        <View style={styles.statRow}>
+          {stats.map((stat) => (
+            <View key={stat.label} style={[styles.statCard, { backgroundColor: colors.secondary }]}>
+              <Text style={[styles.statValue, { color: stat.color }]}>{stat.value}</Text>
+              <Text style={[styles.statLabel, { color: colors.text }]}>{stat.label}</Text>
+            </View>
           ))}
         </View>
       </Animated.View>
 
-      {/* Menu Items */}
-      <Animated.View entering={FadeInRight.delay(400).springify()}>
-        <Text style={[styles.sectionTitle, { color: colors.text }]}>Settings</Text>
-        {menuItems.map((item, index) => (
-          <Animated.View
-            key={item.id}
-            entering={FadeInDown.delay(500 + index * 80).springify()}
-          >
-            <GlassCard animated={false} variant="light" style={{ marginBottom: GlassStyles.spacing.sm }}>
-              <PressableScale onPress={item.onPress} style={styles.menuItem}>
-                <LinearGradient
-                  colors={[`${item.color}25`, `${item.color}10`] as const}
-                  style={styles.menuIconBox}
-                >
-                  <SymbolView
-                    name={item.icon}
-                    size={22}
-                    tintColor={item.color}
-                    type="hierarchical"
-                  />
-                </LinearGradient>
-                <Text style={[styles.menuTitle, { color: colors.text }]}>
-                  {item.title}
-                </Text>
-                <SymbolView
-                  name="chevron.right"
-                  size={14}
-                  tintColor={colors.textSecondary}
-                  type="hierarchical"
-                />
+      <Animated.View entering={FadeInDown.delay(200).springify()}>
+        <Text style={[styles.sectionTitle, { color: colors.text }]}>Quick Actions</Text>
+        <View style={[styles.card, { backgroundColor: colors.secondary }]}>
+          {menuItems.map((item, index) => (
+            <View key={item.id}>
+              <PressableScale style={styles.row} onPress={item.onPress}>
+                <View style={styles.rowLeft}>
+                  <LinearGradient colors={[`${item.color}35`, `${item.color}10`]} style={styles.iconBox}>
+                    <SymbolView name={item.icon} size={18} tintColor={item.color} />
+                  </LinearGradient>
+                  <Text style={[styles.rowTitle, { color: colors.text }]}>{item.title}</Text>
+                </View>
+                <SymbolView name="chevron.right" size={14} tintColor={colors.icon} />
               </PressableScale>
-            </GlassCard>
-          </Animated.View>
-        ))}
+              {index !== menuItems.length - 1 && (
+                <View style={[styles.divider, { backgroundColor: colors.text }]} />
+              )}
+            </View>
+          ))}
+        </View>
       </Animated.View>
 
-      {/* Sign Out Button */}
-      <Animated.View entering={FadeInUp.delay(800).springify()}>
+      <Animated.View entering={FadeInUp.delay(350).springify()}>
         <PressableScale onPress={handleSignOut} style={styles.signOutButton}>
-          <LinearGradient
-            colors={["#E74C3C", "#C0392B"]}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 1 }}
-            style={{
-              borderRadius: GlassStyles.borderRadius.lg,
-              ...GlassStyles.shadow.medium,
-            }}
-          >
-            <View style={styles.signOutContent}>
-              <SymbolView
-                name="rectangle.portrait.and.arrow.right"
-                size={20}
-                tintColor="#fff"
-                type="hierarchical"
-              />
-              <Text style={styles.signOutText}>Sign Out</Text>
+          <LinearGradient colors={["#E74C3C", "#C0392B"]} style={styles.signOutContent}>
+            <View>
+              <Text className="text-white font-bold text-base">Sign Out</Text>
+              <Text className="text-white/70 text-xs mt-1">Come back soon</Text>
             </View>
+            <SymbolView name="rectangle.portrait.and.arrow.right" size={18} tintColor="#fff" />
           </LinearGradient>
         </PressableScale>
       </Animated.View>

@@ -1,19 +1,15 @@
-import { Link, Href } from 'expo-router';
-import { ScrollView, View, Text, Pressable, useWindowDimensions } from 'react-native';
-import Header from '@/components/Header';
-import Feather from '@expo/vector-icons/Feather';
-import useThemeColors from '@/contexts/ThemeColors';
-import '../../../global.css';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import React, { useMemo } from 'react';
-import { Feather as FeatherIcons } from '@expo/vector-icons';
-import { useAuthStore } from '@/utils/auth-store';
-import Card from '@/screens/card';
-import { CardFlip, CardFlipFire, CardFlipRank } from '@/components/card-flip';
+import { CardFlipFire, CardFlipRank } from '@/components/card-flip';
 import CourseActionCard from '@/components/CourseActionCard';
-import CounterCard from '@/components/CounterCard';
-import JournalCard from '@/components/JournalCard';
-import Switch from '@/components/Switch';
+import Header from '@/components/Header';
+import useThemeColors from '@/contexts/ThemeColors';
+import { useAuthStore } from '@/utils/auth-store';
+import { Feather as FeatherIcons } from '@expo/vector-icons';
+import Feather from '@expo/vector-icons/Feather';
+import { Href, Link } from 'expo-router';
+import React, { useMemo } from 'react';
+import { Pressable, ScrollView, Text, useWindowDimensions, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import '../../../global.css';
 
 type FeatherIconName = keyof typeof FeatherIcons.glyphMap;
 
@@ -136,7 +132,6 @@ export default function Home() {
                         </Text>
                     </Pressable>
                 </View>
-
             </ScrollView>
         </>
     );
@@ -185,3 +180,22 @@ const LinkItem = ({ href, icon, title, description, comingSoon = false }: LinkIt
         </Link>
     )
 }
+
+
+const CameraButton = () => {
+    return (
+        <View className='w-20 h-20 p-2 mx-auto rounded-full border border-white items-center justify-center'>
+            <View
+                style={{
+                    elevation: 10,
+                    shadowColor: 'black',
+                    shadowOffset: { width: 0, height: 10 },
+                    shadowOpacity: 0.3,
+                    shadowRadius: 10,
+                }}
+                className='w-full h-full rounded-full bg-white  items-center justify-center' />
+        </View>
+    );
+}
+
+

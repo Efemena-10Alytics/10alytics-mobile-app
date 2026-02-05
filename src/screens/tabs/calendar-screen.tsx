@@ -1,370 +1,375 @@
-import { GlassCard } from "@/components/ui/GlassCard";
-import { Colors, GlassStyles } from "@/constants/theme";
-import { useColorScheme } from "@/hooks/use-color-scheme";
 import useThemedNavigation from "@/hooks/useThemedNavigation";
 import { PressableScale, ScrollView, Text, View } from "@/tw";
 import { Animated } from "@/tw/animated";
 import { LinearGradient } from "expo-linear-gradient";
 import { SymbolView } from "expo-symbols";
-import React, { useState } from "react";
-import { Dimensions, StyleSheet } from "react-native";
+import React, { useMemo, useState } from "react";
+import { StyleSheet } from "react-native";
 import { FadeInDown, FadeInRight } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-const { width } = Dimensions.get("window");
+type EventItem = {
+  id: number;
+  title: string;
+  time: string;
+  date: string;
+  location: string;
+  type: "workshop" | "study" | "live" | "review";
+  attendees: number;
+  color: string;
+};
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
   scrollContent: {
-    paddingHorizontal: GlassStyles.spacing.md,
-    paddingTop: GlassStyles.spacing.md,
+    paddingHorizontal: 20,
     paddingBottom: 120,
-    gap: GlassStyles.spacing.lg,
+    gap: 18,
   },
-  dateNavigation: {
+  headerRow: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    paddingVertical: GlassStyles.spacing.md,
+    marginTop: 6,
   },
-  navButton: {
+  title: {
+    fontSize: 28,
+    fontWeight: "800",
+  },
+  monthText: {
+    fontSize: 16,
+    fontWeight: "600",
+  },
+  weekRow: {
+    flexDirection: "row",
+    gap: 10,
+    marginTop: 10,
+  },
+  dayPill: {
     width: 44,
-    height: 44,
-    borderRadius: 22,
+    height: 64,
+    borderRadius: 16,
     alignItems: "center",
     justifyContent: "center",
-  },
-  dateCenter: {
-    alignItems: "center",
-  },
-  dateMonth: {
-    fontSize: 22,
-    fontWeight: "700",
-  },
-  dateWeekday: {
-    fontSize: 16,
-    marginTop: 4,
-    opacity: 0.7,
   },
   sectionTitle: {
-    fontSize: 20,
-    fontWeight: "700",
-    marginBottom: GlassStyles.spacing.md,
-  },
-  eventCard: {
-    marginBottom: GlassStyles.spacing.md,
-  },
-  eventContent: {
-    flexDirection: "row",
-    alignItems: "flex-start",
-  },
-  eventIconBox: {
-    width: 52,
-    height: 52,
-    borderRadius: GlassStyles.borderRadius.md,
-    alignItems: "center",
-    justifyContent: "center",
-    marginRight: GlassStyles.spacing.md,
-  },
-  eventIcon: {
-    fontSize: 28,
-  },
-  eventDetails: {
-    flex: 1,
-  },
-  eventTitle: {
     fontSize: 18,
     fontWeight: "700",
-    marginBottom: 6,
   },
-  eventMetaRow: {
+  card: {
+    borderRadius: 20,
+    padding: 16,
+  },
+  eventRow: {
     flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 6,
+    alignItems: "flex-start",
+    gap: 12,
   },
-  eventMetaText: {
-    fontSize: 14,
-    marginLeft: 6,
-    opacity: 0.8,
-  },
-  eventDate: {
-    fontSize: 14,
-    marginBottom: 8,
-    opacity: 0.7,
-  },
-  attendeeBadge: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingHorizontal: 10,
-    paddingVertical: 5,
-    borderRadius: GlassStyles.borderRadius.full,
-    alignSelf: "flex-start",
-  },
-  attendeeBadgeText: {
-    fontSize: 12,
-    fontWeight: "600",
-    marginLeft: 4,
-  },
-  emptyState: {
-    alignItems: "center",
-    paddingVertical: GlassStyles.spacing.xl * 2,
-  },
-  emptyIcon: {
-    fontSize: 64,
-    marginBottom: GlassStyles.spacing.md,
-  },
-  emptyTitle: {
-    fontSize: 20,
-    fontWeight: "700",
-    marginBottom: GlassStyles.spacing.sm,
-  },
-  emptySubtitle: {
+  eventTitle: {
     fontSize: 16,
+    fontWeight: "700",
+  },
+  eventMeta: {
+    fontSize: 13,
     opacity: 0.7,
-    textAlign: "center",
+  },
+  badge: {
+    alignSelf: "flex-start",
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 999,
   },
 });
 
+const events: EventItem[] = [
+  {
+    id: 1,
+    title: "React Native Workshop",
+    time: "10:00 AM",
+    date: "2026-01-25",
+    location: "Online",
+    type: "workshop",
+    attendees: 45,
+    color: "#DA6728",
+  },
+  {
+    id: 2,
+    title: "Group Study Session",
+    time: "2:00 PM",
+    date: "2026-01-25",
+    location: "Study Room A",
+    type: "study",
+    attendees: 12,
+    color: "#4A90E2",
+  },
+  {
+    id: 3,
+    title: "Live Q&A with Instructor",
+    time: "4:00 PM",
+    date: "2026-01-26",
+    location: "Online",
+    type: "live",
+    attendees: 120,
+    color: "#9B59B6",
+  },
+  {
+    id: 4,
+    title: "Project Review",
+    time: "11:00 AM",
+    date: "2026-01-27",
+    location: "Online",
+    type: "review",
+    attendees: 8,
+    color: "#E74C3C",
+  },
+];
+
+const dayLabels = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+
+const formatDateKey = (date: Date) => date.toISOString().split("T")[0];
+
+const parseEventDateTime = (event: EventItem) => {
+  const match = event.time.match(/(\d{1,2}):(\d{2})\s*(AM|PM)/i);
+  const base = new Date(event.date);
+  if (!match) return base;
+  let hour = Number(match[1]);
+  const minutes = Number(match[2]);
+  const meridiem = match[3].toUpperCase();
+  if (meridiem === "PM" && hour !== 12) hour += 12;
+  if (meridiem === "AM" && hour === 12) hour = 0;
+  base.setHours(hour, minutes, 0, 0);
+  return base;
+};
+
+const getWeekDays = (date: Date) => {
+  const start = new Date(date);
+  start.setDate(date.getDate() - date.getDay());
+  return Array.from({ length: 7 }).map((_, i) => {
+    const d = new Date(start);
+    d.setDate(start.getDate() + i);
+    return d;
+  });
+};
+
 export function CalendarScreen() {
   const { colors, isDark } = useThemedNavigation();
+  const insets = useSafeAreaInsets();
   const [currentDate, setCurrentDate] = useState(new Date());
 
-  const events = [
-    {
-      id: 1,
-      title: "React Native Workshop",
-      time: "10:00 AM",
-      date: "2026-01-25",
-      location: "Online",
-      type: "workshop",
-      attendees: 45,
-      color: "#DA6728",
-    },
-    {
-      id: 2,
-      title: "Group Study Session",
-      time: "2:00 PM",
-      date: "2026-01-25",
-      location: "Study Room A",
-      type: "study",
-      attendees: 12,
-      color: "#4A90E2",
-    },
-    {
-      id: 3,
-      title: "Live Q&A with Instructor",
-      time: "4:00 PM",
-      date: "2026-01-26",
-      location: "Online",
-      type: "live",
-      attendees: 120,
-      color: "#9B59B6",
-    },
-    {
-      id: 4,
-      title: "Project Review",
-      time: "11:00 AM",
-      date: "2026-01-27",
-      location: "Online",
-      type: "review",
-      attendees: 8,
-      color: "#E74C3C",
-    },
-  ];
+  const weekDays = useMemo(() => getWeekDays(currentDate), [currentDate]);
+  const todayKey = formatDateKey(currentDate);
 
-  const todayEvents = events.filter(
-    (event) => event.date === currentDate.toISOString().split("T")[0]
-  );
+  const todaysEvents = events.filter((e) => e.date === todayKey);
+  const upcomingEvents = events
+    .map((event) => ({ event, date: parseEventDateTime(event) }))
+    .filter(({ date }) => date.getTime() >= new Date().getTime())
+    .sort((a, b) => a.date.getTime() - b.date.getTime());
 
-  const upcomingEvents = events.filter(
-    (event) => new Date(event.date) > currentDate
-  );
-
-  const getEventIcon = (type: string) => {
-    switch (type) {
-      case "workshop":
-        return "📚";
-      case "study":
-        return "👥";
-      case "live":
-        return "🎥";
-      case "review":
-        return "📝";
-      default:
-        return "📅";
-    }
-  };
-
-  const navigateDate = (direction: number) => {
-    setCurrentDate((prev) => {
-      const next = new Date(prev);
-      next.setDate(next.getDate() + direction);
-      return next;
-    });
-  };
-
-  const renderEventCard = (event: typeof events[0], index: number, isUpcoming = false) => (
-    <Animated.View
-      key={event.id}
-      entering={FadeInDown.delay(isUpcoming ? 400 + index * 100 : 200 + index * 100).springify()}
-    >
-      <GlassCard
-        animated={false}
-        variant="light"
-        borderAccent={event.color}
-        style={styles.eventCard}
-      >
-        <View style={styles.eventContent}>
-          <LinearGradient
-            colors={[`${event.color}30`, `${event.color}15`]}
-            style={styles.eventIconBox}
-          >
-            <Text style={styles.eventIcon}>{getEventIcon(event.type)}</Text>
-          </LinearGradient>
-          <View style={styles.eventDetails}>
-            <Text style={[styles.eventTitle, { color: colors.text }]}>
-              {event.title}
-            </Text>
-            {isUpcoming && (
-              <Text style={[styles.eventDate, { color: colors.textSecondary }]}>
-                {new Date(event.date).toLocaleDateString("en-US", {
-                  weekday: "long",
-                  month: "short",
-                  day: "numeric",
-                })}
-              </Text>
-            )}
-            <View style={styles.eventMetaRow}>
-              <SymbolView
-                name="clock.fill"
-                size={14}
-                tintColor={colors.textSecondary}
-                type="hierarchical"
-              />
-              <Text style={[styles.eventMetaText, { color: colors.textSecondary }]}>
-                {event.time}
-              </Text>
-            </View>
-            <View style={styles.eventMetaRow}>
-              <SymbolView
-                name="mappin.circle.fill"
-                size={14}
-                tintColor={colors.textSecondary}
-                type="hierarchical"
-              />
-              <Text style={[styles.eventMetaText, { color: colors.textSecondary }]}>
-                {event.location}
-              </Text>
-            </View>
-            <View
-              style={[
-                styles.attendeeBadge,
-                { backgroundColor: `${event.color}15` },
-              ]}
-            >
-              <SymbolView
-                name="person.2.fill"
-                size={14}
-                tintColor={event.color}
-                type="hierarchical"
-              />
-              <Text style={[styles.attendeeBadgeText, { color: event.color }]}>
-                {event.attendees} attending
-              </Text>
-            </View>
-          </View>
-        </View>
-      </GlassCard>
-    </Animated.View>
-  );
+  const nextEvent = upcomingEvents[0]?.event;
 
   return (
     <ScrollView
       contentInsetAdjustmentBehavior="automatic"
       showsVerticalScrollIndicator={false}
-      style={[styles.container, { backgroundColor: isDark ? colors.background : "#F5F0EB" }]}
-      contentContainerStyle={styles.scrollContent}
+      style={[styles.container, { backgroundColor: colors.bg }]}
+      contentContainerStyle={[styles.scrollContent, { paddingTop: insets.top + 10 }]}
     >
-      {/* Date Navigation */}
       <Animated.View entering={FadeInDown.delay(50).springify()}>
-        <GlassCard animated={false} variant="light" showGradientBorder>
-          <View style={styles.dateNavigation}>
-            <PressableScale
-              onPress={() => navigateDate(-1)}
-              style={[styles.navButton, { backgroundColor: `${colors.primary}15` }]}
-            >
-              <SymbolView
-                name="chevron.left"
-                size={20}
-                tintColor={colors.primary}
-                type="hierarchical"
-              />
-            </PressableScale>
-            <View style={styles.dateCenter}>
-              <Text style={[styles.dateMonth, { color: colors.text }]}>
-                {currentDate.toLocaleDateString("en-US", {
-                  month: "long",
-                  year: "numeric",
-                })}
-              </Text>
-              <Text style={[styles.dateWeekday, { color: colors.textSecondary }]}>
-                {currentDate.toLocaleDateString("en-US", {
-                  weekday: "long",
-                  day: "numeric",
-                })}
-              </Text>
-            </View>
-            <PressableScale
-              onPress={() => navigateDate(1)}
-              style={[styles.navButton, { backgroundColor: `${colors.primary}15` }]}
-            >
-              <SymbolView
-                name="chevron.right"
-                size={20}
-                tintColor={colors.primary}
-                type="hierarchical"
-              />
-            </PressableScale>
+        <View style={styles.headerRow}>
+          <View>
+            <Text style={[styles.title, { color: colors.text }]}>Calendar</Text>
+            <Text style={[styles.monthText, { color: colors.text, opacity: 0.6 }]}>
+              {currentDate.toLocaleDateString("en-US", { month: "long", year: "numeric" })}
+            </Text>
           </View>
-        </GlassCard>
+          <PressableScale
+            onPress={() => setCurrentDate(new Date())}
+            className="rounded-full px-4 py-2"
+            style={{ backgroundColor: colors.secondary }}
+          >
+            <Text style={{ color: colors.text }} className="text-sm font-semibold">
+              Today
+            </Text>
+          </PressableScale>
+        </View>
       </Animated.View>
 
-      {/* Today's Events */}
+      <Animated.View entering={FadeInRight.delay(100).springify()}>
+        <View style={styles.weekRow}>
+          {weekDays.map((day) => {
+            const isSelected = formatDateKey(day) === todayKey;
+            return (
+              <PressableScale
+                key={day.toISOString()}
+                onPress={() => setCurrentDate(day)}
+                style={[
+                  styles.dayPill,
+                  {
+                    backgroundColor: isSelected ? colors.text : colors.secondary,
+                    borderWidth: isSelected ? 0 : 1,
+                    borderColor: colors.border,
+                  },
+                ]}
+              >
+                <Text
+                  style={{
+                    color: isSelected ? colors.invert : colors.text,
+                    opacity: isSelected ? 1 : 0.6,
+                    fontSize: 12,
+                  }}
+                >
+                  {dayLabels[day.getDay()]}
+                </Text>
+                <Text
+                  style={{
+                    color: isSelected ? colors.invert : colors.text,
+                    fontSize: 16,
+                    fontWeight: "700",
+                  }}
+                >
+                  {day.getDate()}
+                </Text>
+              </PressableScale>
+            );
+          })}
+        </View>
+      </Animated.View>
+
       <View>
-        <Animated.View entering={FadeInRight.delay(100).springify()}>
-          <Text style={[styles.sectionTitle, { color: colors.text }]}>
-            Today's Events
-          </Text>
-        </Animated.View>
-        {todayEvents.length > 0 ? (
-          todayEvents.map((event, index) => renderEventCard(event, index))
-        ) : (
-          <Animated.View entering={FadeInDown.delay(200).springify()}>
-            <GlassCard animated={false} variant="medium">
-              <View style={styles.emptyState}>
-                <Text style={styles.emptyIcon}>📭</Text>
-                <Text style={[styles.emptyTitle, { color: colors.text }]}>
-                  No Events Today
+        <Text style={[styles.sectionTitle, { color: colors.text }]}>Next Up</Text>
+        {nextEvent ? (
+          <View style={[styles.card, { backgroundColor: colors.secondary, marginTop: 10 }]}>
+            <View style={styles.eventRow}>
+              <LinearGradient
+                colors={[`${nextEvent.color}35`, `${nextEvent.color}10`]}
+                style={{
+                  width: 50,
+                  height: 50,
+                  borderRadius: 14,
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <SymbolView name="video.fill" size={20} tintColor={nextEvent.color} />
+              </LinearGradient>
+              <View style={{ flex: 1 }}>
+                <Text style={[styles.eventTitle, { color: colors.text }]}>
+                  {nextEvent.title}
                 </Text>
-                <Text style={[styles.emptySubtitle, { color: colors.textSecondary }]}>
-                  Enjoy your free day or explore upcoming events
+                <Text style={[styles.eventMeta, { color: colors.text }]}>
+                  {nextEvent.time} • {nextEvent.location}
                 </Text>
+                <View
+                  style={[
+                    styles.badge,
+                    { backgroundColor: `${nextEvent.color}15` },
+                  ]}
+                >
+                  <Text style={{ color: nextEvent.color, fontSize: 12, fontWeight: "600" }}>
+                    {nextEvent.attendees} attending
+                  </Text>
+                </View>
               </View>
-            </GlassCard>
-          </Animated.View>
+            </View>
+          </View>
+        ) : (
+          <View style={[styles.card, { backgroundColor: colors.secondary, marginTop: 10 }]}>
+            <Text style={[styles.eventTitle, { color: colors.text }]}>No upcoming classes</Text>
+            <Text style={[styles.eventMeta, { color: colors.text }]}>
+              Check back later for new sessions.
+            </Text>
+          </View>
         )}
       </View>
 
-      {/* Upcoming Events */}
       <View>
-        <Animated.View entering={FadeInRight.delay(300).springify()}>
-          <Text style={[styles.sectionTitle, { color: colors.text }]}>
-            Upcoming Events
-          </Text>
-        </Animated.View>
-        {upcomingEvents.map((event, index) => renderEventCard(event, index, true))}
+        <Text style={[styles.sectionTitle, { color: colors.text }]}>Today</Text>
+        {todaysEvents.length > 0 ? (
+          todaysEvents.map((event, index) => (
+            <Animated.View
+              key={event.id}
+              entering={FadeInDown.delay(150 + index * 80).springify()}
+              style={{ marginTop: 10 }}
+            >
+              <View style={[styles.card, { backgroundColor: colors.secondary }]}>
+                <View style={styles.eventRow}>
+                  <LinearGradient
+                    colors={[`${event.color}35`, `${event.color}10`]}
+                    style={{
+                      width: 44,
+                      height: 44,
+                      borderRadius: 12,
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <SymbolView name="clock.fill" size={18} tintColor={event.color} />
+                  </LinearGradient>
+                  <View style={{ flex: 1 }}>
+                    <Text style={[styles.eventTitle, { color: colors.text }]}>
+                      {event.title}
+                    </Text>
+                    <Text style={[styles.eventMeta, { color: colors.text }]}>
+                      {event.time} • {event.location}
+                    </Text>
+                  </View>
+                </View>
+              </View>
+            </Animated.View>
+          ))
+        ) : (
+          <View style={[styles.card, { backgroundColor: colors.secondary, marginTop: 10 }]}>
+            <Text style={[styles.eventTitle, { color: colors.text }]}>No events today</Text>
+            <Text style={[styles.eventMeta, { color: colors.text }]}>
+              You are clear for the day.
+            </Text>
+          </View>
+        )}
+      </View>
+
+      <View>
+        <Text style={[styles.sectionTitle, { color: colors.text }]}>Upcoming</Text>
+        {events
+          .filter((event) => new Date(event.date) > currentDate)
+          .map((event, index) => (
+            <Animated.View
+              key={event.id}
+              entering={FadeInRight.delay(200 + index * 90).springify()}
+              style={{ marginTop: 10 }}
+            >
+              <View style={[styles.card, { backgroundColor: colors.secondary }]}>
+                <View style={styles.eventRow}>
+                  <LinearGradient
+                    colors={[`${event.color}25`, `${event.color}10`]}
+                    style={{
+                      width: 44,
+                      height: 44,
+                      borderRadius: 12,
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <SymbolView name="calendar" size={18} tintColor={event.color} />
+                  </LinearGradient>
+                  <View style={{ flex: 1 }}>
+                    <Text style={[styles.eventTitle, { color: colors.text }]}>
+                      {event.title}
+                    </Text>
+                    <Text style={[styles.eventMeta, { color: colors.text }]}>
+                      {new Date(event.date).toLocaleDateString("en-US", {
+                        weekday: "short",
+                        month: "short",
+                        day: "numeric",
+                      })}{" "}
+                      • {event.time}
+                    </Text>
+                  </View>
+                </View>
+              </View>
+            </Animated.View>
+          ))}
       </View>
     </ScrollView>
   );
