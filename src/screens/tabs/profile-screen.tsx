@@ -120,6 +120,7 @@ export function ProfileScreen() {
   const colors = useThemeColors();
   const insets = useSafeAreaInsets();
   const { logOut, user } = useAuthStore();
+  const isDark = colors.isDark;
 
   const stats = [
     { label: "Courses", value: "12", color: "#DA6728" },
@@ -199,13 +200,34 @@ export function ProfileScreen() {
 
       <Animated.View entering={FadeInUp.delay(350).springify()}>
         <PressableScale onPress={handleSignOut} style={styles.signOutButton}>
-          <LinearGradient colors={["#E74C3C", "#C0392B"]} style={styles.signOutContent}>
-            <View>
-              <Text className="text-white font-bold text-base">Sign Out</Text>
-              <Text className="text-white/70 text-xs mt-1">Come back soon</Text>
+          {isDark ? (
+            <LinearGradient colors={["#E74C3C", "#C0392B"]} style={styles.signOutContent}>
+              <View>
+                <Text className="text-white font-bold text-base">Sign Out</Text>
+                <Text className="text-white/70 text-xs mt-1">Come back soon</Text>
+              </View>
+              <SymbolView name="rectangle.portrait.and.arrow.right" size={18} tintColor="#fff" />
+            </LinearGradient>
+          ) : (
+            <View
+              style={[
+                styles.signOutContent,
+                {
+                  backgroundColor: "#E74C3C",
+                },
+              ]}
+            >
+              <View>
+                <Text style={{ color: "#fff" }} className="font-bold text-base">
+                  Sign Out
+                </Text>
+                <Text style={{ color: "rgba(255,255,255,0.7)" }} className="text-xs mt-1">
+                  Come back soon
+                </Text>
+              </View>
+              <SymbolView name="rectangle.portrait.and.arrow.right" size={18} tintColor="#fff" />
             </View>
-            <SymbolView name="rectangle.portrait.and.arrow.right" size={18} tintColor="#fff" />
-          </LinearGradient>
+          )}
         </PressableScale>
       </Animated.View>
     </ScrollView>
