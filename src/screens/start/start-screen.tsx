@@ -1,4 +1,5 @@
 import { Colors, GlassStyles, Gradients } from "@/constants/theme";
+import { useTheme } from "@/contexts/ThemeContext";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { useAuthStore } from "@/utils/auth-store";
 import { BlurView } from "expo-blur";
@@ -135,9 +136,9 @@ const styles = StyleSheet.create({
 });
 
 export function StartScreen() {
-  const colorScheme = useColorScheme();
-  const colors = Colors[colorScheme ?? "light"];
-  const isDark = colorScheme === "dark";
+  const { theme } = useTheme();
+  const colors = Colors[theme as "light" | "dark"];
+  const isDark = theme === "dark";
   const lottieRef = useRef<LottieView>(null);
   const [isNavigationReady, setIsNavigationReady] = useState(false);
   const { isLoggedIn, hasCompletedOnboarding } = useAuthStore();
@@ -208,7 +209,7 @@ export function StartScreen() {
             />
             <LottieView
               ref={lottieRef}
-              source={require("@/assets/lottie/welcome.json")}
+              source={require("@/assets/lottie/welcome-1.json")}
               style={styles.lottie}
               loop
               autoPlay

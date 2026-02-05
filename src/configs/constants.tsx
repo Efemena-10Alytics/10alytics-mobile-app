@@ -6,6 +6,7 @@ import One from "@/assets/images/onboarding/1.png";
 import Two from "@/assets/images/onboarding/2.png";
 //@ts-ignore
 import Three from "@/assets/images/onboarding/3.png";
+
 import { IsIPAD } from "@/themes/app.constant";
 
 export const onBoardingSlides: onBoardingSlidesTypes[] = [

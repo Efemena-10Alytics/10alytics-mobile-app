@@ -110,7 +110,7 @@ const styles = StyleSheet.create({
 
 export function IndexScreen() {
   const colorScheme = useColorScheme();
-  const colors = Colors[colorScheme ?? "light"];
+  const colors = Colors[colorScheme as "light" | "dark"];
 
   const features = [
     {

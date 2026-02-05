@@ -1,6 +1,7 @@
 import { GlassCard } from "@/components/ui/GlassCard";
 import { Colors, GlassStyles } from "@/constants/theme";
 import { useColorScheme } from "@/hooks/use-color-scheme";
+import useThemedNavigation from "@/hooks/useThemedNavigation";
 import { PressableScale, ScrollView, Text, View } from "@/tw";
 import { Animated } from "@/tw/animated";
 import { LinearGradient } from "expo-linear-gradient";
@@ -127,10 +128,7 @@ const styles = StyleSheet.create({
 });
 
 export function CalendarScreen() {
-  const colorScheme = useColorScheme();
-  const colors = Colors[colorScheme ?? "light"];
-  const isDark = colorScheme === "dark";
-  const insets = useSafeAreaInsets();
+  const { colors, isDark } = useThemedNavigation();
   const [currentDate, setCurrentDate] = useState(new Date());
 
   const events = [
