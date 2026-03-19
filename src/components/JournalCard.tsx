@@ -41,7 +41,7 @@ export default function JournalCard({
         >
             <View className="flex-row p-5 gap-4">
                 {hasMedia && (
-                    <View className="h-[96px] w-[96px] bg-[#000000] items-center justify-center overflow-hidden rounded-2xl">
+                    <View className="h-[96px] w-[96px] bg-[#DA6728] items-center justify-center overflow-hidden rounded-2xl">
                         {cover != null ? (
                             cover
                         ) : (
@@ -84,11 +84,11 @@ export default function JournalCard({
                         </View>
                     )}
 
-                    <View className="flex-row items-center justify-between mt-4">
-                        <Pressable className="bg-text rounded-xl px-4 py-2">
-                            <Text className="text-invert font-semibold text-sm">{actionLabel}</Text>
+                    <View className="flex-row items-center justify-between mt-4 w-full">
+                        <Pressable className="bg-text rounded-xl px-4 py-2 w-full flex-row items-center justify-center" style={{ backgroundColor: colors.primary }}>
+                            <Text className="text-white font-semibold text-sm text-center">{actionLabel}</Text>
+                            <Feather name='chevron-right' size={18} color="white" />
                         </Pressable>
-                        <Feather name='chevron-right' size={18} color={colors.icon} />
                     </View>
                 </View>
             </View>

@@ -1,19 +1,13 @@
 import Feather from "@expo/vector-icons/Feather";
 import { Link, router } from "expo-router";
 import React, { useMemo } from "react";
-import {
-    ActivityIndicator,
-    Pressable,
-    ScrollView,
-    Text,
-    useWindowDimensions,
-    View,
-} from "react-native";
+import { Pressable, ScrollView, Text, useWindowDimensions, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import CourseActionCard from "@/components/CourseActionCard";
 import Header from "@/components/Header";
 import { CardFlipFire, CardFlipRank } from "@/components/card-flip";
+import { HomeCoursesCarouselSkeleton } from "@/components/ui/course-loading-skeletons";
 import useThemeColors from "@/contexts/ThemeColors";
 import { useUserCourses } from "@/hooks/use-user-courses";
 import type { UserCourse } from "@/lib/api-client";
@@ -91,10 +85,7 @@ export default function Home() {
                     </Link>
                 </View>
                 {isPending && !data ? (
-                    <View className="mb-6 py-10 items-center justify-center">
-                        <ActivityIndicator size="large" color={colors.icon} />
-                        <Text className="text-text text-sm opacity-60 mt-3">Loading courses…</Text>
-                    </View>
+                    <HomeCoursesCarouselSkeleton cardWidth={courseCardWidth} />
                 ) : isError ? (
                     <View className="mb-6 rounded-3xl border border-text/10 p-5">
                         <Text className="text-text font-semibold">Couldn&apos;t load courses</Text>
@@ -134,6 +125,7 @@ export default function Home() {
                                         title={course.title}
                                         subtitle={formatSlugLabel(course.slug)}
                                         action={action}
+                                        cohortName={course.cohort_name}
                                         progress={progress}
                                         thumbnail={
                                             <CourseCoverForSlug slug={course.slug} size={40} />
@@ -141,7 +133,7 @@ export default function Home() {
                                         onPress={() =>
                                             router.push({
                                                 pathname: "/course/[id]",
-                                                params: { id: String(course.course_id) },
+                                                params: { id: String(course.id) },
                                             })
                                         }
                                     />

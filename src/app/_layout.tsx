@@ -96,7 +96,7 @@ export default function RootLayout() {
                                 }}
                             />
                             <Stack.Screen
-                                name="course-details"
+                                name="(screens)"
                                 options={{
                                     headerShown: false,
                                     presentation: 'card',

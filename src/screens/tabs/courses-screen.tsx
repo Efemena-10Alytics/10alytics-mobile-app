@@ -1,16 +1,11 @@
 import { router } from "expo-router";
 import React, { useCallback } from "react";
-import {
-  ActivityIndicator,
-  FlatList,
-  Pressable,
-  RefreshControl,
-  StyleSheet,
-} from "react-native";
+import { FlatList, Pressable, RefreshControl, StyleSheet } from "react-native";
 import { FadeInRight } from "react-native-reanimated";
 import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 
 import JournalCard from "@/components/JournalCard";
+import { CoursesTabListSkeleton } from "@/components/ui/course-loading-skeletons";
 import { Colors, GlassStyles } from "@/constants/theme";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { useUserCourses } from "@/hooks/use-user-courses";
@@ -76,7 +71,7 @@ export function CoursesScreen() {
         onPress={() =>
           router.push({
             pathname: "/course/[id]",
-            params: { id: String(course.course_id) },
+            params: { id: String(course.id) },
           })
         }
       />
@@ -98,12 +93,10 @@ export function CoursesScreen() {
         className="flex-1"
         style={{ backgroundColor: isDark ? colors.background : "#F5F0EB", paddingTop: insets.top }}
       >
-        <View style={styles.centerState}>
-          <ActivityIndicator size="large" color={colors.primary} />
-          <Text className="mt-4 text-base" style={{ color: colors.text }}>
-            Loading your courses…
-          </Text>
-        </View>
+        <CoursesTabListSkeleton
+          backgroundColor={isDark ? colors.background : "#F5F0EB"}
+          isDark={isDark}
+        />
       </SafeAreaView>
     );
   }

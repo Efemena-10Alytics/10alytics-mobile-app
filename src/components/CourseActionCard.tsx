@@ -11,6 +11,7 @@ interface CourseActionCardProps {
     subtitle: string;
     action?: CourseAction;
     progress?: number;
+    cohortName?: string;
     icon?: ImageSourcePropType;
     /** When set, shown in the avatar slot instead of `icon` (e.g. SVG cover). */
     thumbnail?: ReactNode;
@@ -26,6 +27,7 @@ const actionLabels: Record<CourseAction, string> = {
 export default function CourseActionCard({
     title,
     subtitle,
+    cohortName,
     action = "continue",
     progress,
     icon,
@@ -55,7 +57,7 @@ export default function CourseActionCard({
                                 style={{
                                     width: 54,
                                     height: 54,
-                                    backgroundColor: isDark ? "#1D1A18" : "#FFFFFF",
+                                    backgroundColor: "#DA6728",
                                     borderWidth: 1,
                                     borderColor: isDark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.06)",
                                 }}
@@ -80,20 +82,21 @@ export default function CourseActionCard({
                             </Text>
                         </View>
                     </View>
-                    <View
-                        className="px-3 py-1 rounded-full"
-                        style={{ backgroundColor: accentGlow }}
-                    >
-                        <Text style={{ color: colors.text }} className="text-xs uppercase tracking-wider">
-                            Course
-                        </Text>
-                    </View>
                 </View>
 
-                {/* Subtitle */}
-                <Text style={{ color: muted }} className="text-sm mt-4">
-                    {subtitle}
-                </Text>
+                <View className="flex-row items-center justify-between gap-2">
+
+                    {/* Subtitle */}
+                    <Text style={{ color: muted }} className="text-sm mt-4">
+                        {subtitle}
+                    </Text>
+
+                    {cohortName && (
+                        <Text style={{ color: muted }} className="text-sm mt-4">
+                            {cohortName}
+                        </Text>
+                    )}
+                </View>
 
                 {/* Progress */}
                 {typeof progress === "number" && (

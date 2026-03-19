@@ -28,6 +28,7 @@ interface ApiError {
 }
 
 export interface UserCourse {
+  cohort_name: string;
   course_id: number;
   title: string;
   slug: string;
@@ -40,6 +41,103 @@ export interface UserCoursesApiResponse {
   data: UserCourse[];
   message: string;
   status: string;
+}
+
+export interface UserCourseLesson {
+  id: number;
+  course_module_id: number;
+  title: string;
+  description: string | null;
+  video_url: string | null;
+  video_preview: string | null;
+}
+
+export interface UserCourseModule {
+  id: number;
+  course_week_id: number;
+  title: string;
+  course_lessons: UserCourseLesson[];
+}
+
+export interface UserCourseWeek {
+  id: number;
+  course_id: number;
+  title: string;
+  week: number;
+  isLocked: number;
+  isDeleted: number;
+  course_module: UserCourseModule[];
+  assessments: unknown[];
+}
+
+export interface UserCourseInstructor {
+  id: number;
+  name: string;
+  career: string;
+  image_url: string | null;
+  link: string | null;
+  email?: string;
+}
+
+export interface UserCourseDetailCourse {
+  id: number;
+  title: string;
+  slug: string;
+  description: string | null;
+  tagline: string | null;
+  duration: string | null;
+  image: string | null;
+  video: string | null;
+  language: string | null;
+  level: string | null;
+  link_to_brochure: string | null;
+  career_starter_kit_link: string | null;
+  whatsapp_community_link: string | null;
+  enrolled_students_count?: number;
+  course_weeks: UserCourseWeek[];
+  instructors: UserCourseInstructor[];
+}
+
+export interface UserCourseDetailInnerData {
+  course: UserCourseDetailCourse;
+  progress_percentage: number;
+  /** Enrollment “continue here” pointer; matches `UserCourseLesson.id`. API may send `current_week_video` or `current_week_video_id`. */
+  current_week_video_id?: number | null;
+}
+
+export interface UserCourseDetailApiResponse {
+  data: UserCourseDetailInnerData;
+  message: string;
+  status: string;
+}
+
+/** Row from `GET /api/courses/{enrollmentId}/lockedWeeks` */
+export interface CourseLockedWeekRow {
+  week: number;
+  is_locked: number | boolean;
+  is_completed?: boolean;
+}
+
+export function parseLockedWeeksResponse(raw: unknown): CourseLockedWeekRow[] {
+  if (Array.isArray(raw)) return raw as CourseLockedWeekRow[];
+  if (
+    raw &&
+    typeof raw === "object" &&
+    "data" in raw &&
+    Array.isArray((raw as { data: unknown }).data)
+  ) {
+    return (raw as { data: CourseLockedWeekRow[] }).data;
+  }
+  return [];
+}
+
+/** API may send `0` / `1`, booleans, or strings. */
+export function normalizeWeekLockedFlag(
+  isLocked: number | boolean | string | undefined,
+): boolean {
+  if (isLocked === true || isLocked === 1 || isLocked === "1") return true;
+  if (isLocked === false || isLocked === 0 || isLocked === "0") return false;
+  return Boolean(isLocked);
 }
 
 class ApiClient {
@@ -111,8 +209,6 @@ class ApiClient {
       });
 
       const responseData = await response.json();
-
-      console.log("responseData", responseData);
 
       if (!response.ok) {
         return {
@@ -193,6 +289,30 @@ class ApiClient {
     return this.request<UserCoursesApiResponse>("/api/v2/user/courses", {
       method: "GET",
     });
+  }
+
+  /** `enrollmentId` is the user-course / enrollment row id from `UserCourse.id`, not catalog `course_id`. */
+  async getUserCourseDetail(enrollmentId: number): Promise<{
+    data?: UserCourseDetailApiResponse;
+    error?: ApiError;
+  }> {
+    return this.request<UserCourseDetailApiResponse>(
+      `/api/v2/user/course/${enrollmentId}`,
+      { method: "GET" },
+    );
+  }
+
+  /** Lock state per week index; `enrollmentId` is `UserCourse.id`. */
+  async getCourseLockedWeeks(enrollmentId: number): Promise<{
+    data?: CourseLockedWeekRow[];
+    error?: ApiError;
+  }> {
+    const result = await this.request<unknown>(
+      `/api/courses/${enrollmentId}/lockedWeeks`,
+      { method: "GET" },
+    );
+    if (result.error) return { error: result.error };
+    return { data: parseLockedWeeksResponse(result.data) };
   }
 
   async googleAuth(): Promise<{
