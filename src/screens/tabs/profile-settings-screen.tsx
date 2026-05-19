@@ -112,7 +112,7 @@ export function ProfileSettingsScreen() {
   );
 
   return (
-    <View className="flex-1" style={{ backgroundColor: colors.bg }}>
+    <View className="flex-1" style={{ backgroundColor: colors.bg, paddingBottom: insets.bottom }}>
       <View
         className="px-4 pb-2"
         style={{ paddingTop: insets.top + 8 }}
